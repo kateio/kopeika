@@ -11,7 +11,7 @@ const context = await browser.newContext({
 });
 const page = await context.newPage();
 
-const BASE = 'http://localhost:4174';
+const BASE = 'http://localhost:5173';
 
 async function shot(url, name, waitFor) {
   await page.goto(url, { waitUntil: 'networkidle' });
@@ -25,41 +25,50 @@ async function shot(url, name, waitFor) {
 
 console.log('Снимаю скриншоты...');
 
+// 01 — Start screen
 await shot(`${BASE}/start`, '01-start', 'text=Копейка');
+
+// 02 — Main / expenses
 await shot(`${BASE}/`, '02-main-expenses', 'text=Апрель');
 
-// Switch to income tab if available
-try {
-  await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
+// 03 — Main / income
+await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
+await page.waitForTimeout(500);
+const incomeBtn = await page.$('button:has-text("доходы")');
+if (incomeBtn) {
+  await incomeBtn.click();
   await page.waitForTimeout(500);
-  const incomeBtn = await page.$('button:has-text("доходы")');
-  if (incomeBtn) {
-    await incomeBtn.click();
-    await page.waitForTimeout(500);
-    await page.screenshot({ path: `${OUT}/03-main-income.png`, fullPage: false });
-    console.log('  ✓ 03-main-income.png');
-  }
-} catch (e) {
-  console.log('  ⚠ income tab not found');
+  await page.screenshot({ path: `${OUT}/03-main-income.png`, fullPage: false });
+  console.log('  ✓ 03-main-income.png');
 }
 
+// 04 — UIKit top
 await shot(`${BASE}/uikit`, '04-uikit-top', 'text=UI Kit');
 
-// Scroll down for more uikit
-try {
-  await page.goto(`${BASE}/uikit`, { waitUntil: 'networkidle' });
-  await page.waitForTimeout(500);
-  await page.evaluate(() => window.scrollTo(0, 1200));
-  await page.waitForTimeout(500);
-  await page.screenshot({ path: `${OUT}/05-uikit-components.png`, fullPage: false });
-  console.log('  ✓ 05-uikit-components.png');
+// 05 — UIKit components (scroll down)
+await page.goto(`${BASE}/uikit`, { waitUntil: 'networkidle' });
+await page.waitForTimeout(500);
+await page.evaluate(() => window.scrollTo(0, 1200));
+await page.waitForTimeout(500);
+await page.screenshot({ path: `${OUT}/05-uikit-components.png`, fullPage: false });
+console.log('  ✓ 05-uikit-components.png');
 
-  await page.evaluate(() => window.scrollTo(0, 3000));
+// 06 — UIKit charts (scroll more)
+await page.evaluate(() => window.scrollTo(0, 3000));
+await page.waitForTimeout(500);
+await page.screenshot({ path: `${OUT}/06-uikit-charts.png`, fullPage: false });
+console.log('  ✓ 06-uikit-charts.png');
+
+// 07 — Category modal open
+await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
+await page.waitForTimeout(500);
+// Click the first category card to open the modal
+const catButton = await page.$('button:has-text("еда")');
+if (catButton) {
+  await catButton.click();
   await page.waitForTimeout(500);
-  await page.screenshot({ path: `${OUT}/06-uikit-charts.png`, fullPage: false });
-  console.log('  ✓ 06-uikit-charts.png');
-} catch (e) {
-  console.log('  ⚠ uikit scroll failed');
+  await page.screenshot({ path: `${OUT}/07-category-modal-open.png`, fullPage: false });
+  console.log('  ✓ 07-category-modal-open.png');
 }
 
 await browser.close();
