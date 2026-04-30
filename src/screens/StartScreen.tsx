@@ -76,7 +76,7 @@ export function StartScreen({ onContinue }: StartScreenProps) {
   return (
     <div
       className="flex h-full flex-col"
-      style={{ background: BG, color: FG, paddingTop: 64 }}
+      style={{ background: BG, color: FG, paddingTop: 'env(safe-area-inset-top, 20px)' }}
     >
       {/* ── Logo + tagline ──────────────────────────────── */}
       <div className="flex flex-col items-center px-8 pb-6 pt-10">
@@ -183,7 +183,7 @@ export function StartScreen({ onContinue }: StartScreenProps) {
       </div>
 
       {/* ── CTA ────────────────────────────────────────── */}
-      <div className="px-6 pb-10 pt-4">
+      <div className="sticky bottom-0 px-6 pb-10 pt-4" style={{ background: BG }}>
         <button
           onClick={onContinue}
           className="flex w-full cursor-pointer items-center justify-center gap-2 border-none text-[17px] font-semibold"

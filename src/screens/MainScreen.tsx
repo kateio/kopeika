@@ -271,7 +271,8 @@ function CategoryModal({ cat, transactions, month, onClose }: CategoryModalProps
           borderTopLeftRadius: 28,
           borderTopRightRadius: 28,
           padding: '12px 0 30px',
-          maxHeight: '78%',
+          height: '70vh',
+          maxHeight: '70vh',
         }}
       >
         {/* grabber */}
@@ -417,7 +418,7 @@ export function MainScreen({ onGoToStart }: MainScreenProps) {
       style={{ background: BG, color: FG }}
     >
       {/* ── Header ────────────────────────────────────── */}
-      <div className="flex items-center justify-between px-6" style={{ paddingTop: 60, paddingBottom: 12 }}>
+      <div className="flex items-center justify-between px-6" style={{ paddingTop: 56, paddingBottom: 12 }}>
         <button
           onClick={() => setShowMonths((s) => !s)}
           className="flex cursor-pointer items-center gap-1.5 border-none bg-transparent p-0 text-[28px] font-bold"
@@ -500,7 +501,7 @@ export function MainScreen({ onGoToStart }: MainScreenProps) {
                 padding: 10,
                 borderRadius: RADIUS - 4,
                 background: mode === k ? BG : 'transparent',
-                color: FG,
+                color: mode === k ? FG : MUTED,
                 fontFamily: 'inherit',
                 boxShadow: mode === k ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
               }}
@@ -565,7 +566,7 @@ export function MainScreen({ onGoToStart }: MainScreenProps) {
       </div>
 
       {/* ── Input bar ─────────────────────────────────── */}
-      <div className="relative px-4 pb-5 pt-3">
+      <div className="sticky bottom-0 relative px-4 pb-5 pt-3" style={{ background: BG }}>
         {attachToast && (
           <div
             className="absolute left-4 right-4 flex items-center gap-2.5 animate-[slideUp_0.3s_ease]"

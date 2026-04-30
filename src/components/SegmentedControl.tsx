@@ -17,10 +17,10 @@ export function SegmentedControl({
         <button
           key={opt.value}
           onClick={() => onChange(opt.value)}
-          className={`flex-1 rounded-[12px] border-none px-2 py-2.5 text-sm font-semibold text-fg transition-all duration-150 ${
+          className={`flex-1 rounded-[12px] border-none px-2 py-2.5 text-sm font-semibold transition-all duration-150 ${
             opt.value === value
-              ? 'bg-bg shadow-[0_2px_8px_rgba(0,0,0,0.06)]'
-              : 'bg-transparent'
+              ? 'bg-bg text-fg shadow-[0_2px_8px_rgba(0,0,0,0.06)]'
+              : 'bg-transparent text-muted'
           }`}
         >
           {opt.label}
