@@ -1,5 +1,6 @@
 import type { Transaction, Category } from '@/types';
 import { Icon } from './Icon';
+import { useScrollLock } from '@/lib/useScrollLock';
 
 interface SummarySheetProps {
   transactions: Transaction[];
@@ -16,6 +17,8 @@ export function SummarySheet({
   monthName,
   onClose,
 }: SummarySheetProps) {
+  useScrollLock(true);
+
   const income = transactions
     .filter((t) => t.type === 'income')
     .reduce((s, t) => s + (t.currency === 'RUB' ? t.amount : t.amount * 90), 0);
@@ -50,14 +53,14 @@ export function SummarySheet({
     <div
       onClick={onClose}
       className="fixed inset-0 z-[100] flex items-end"
-      style={{ background: 'rgba(0,0,0,0.4)', animation: 'fadeIn 0.2s ease' }}
+      style={{ background: 'rgba(0,0,0,0.4)', animation: 'fadeIn 0.2s ease', overscrollBehavior: 'contain' }}
     >
       <div
         onClick={(e) => e.stopPropagation()}
         className="flex w-full flex-col bg-bg"
         style={{
-          borderTopLeftRadius: 28,
-          borderTopRightRadius: 28,
+          borderTopLeftRadius: 24,
+          borderTopRightRadius: 24,
           padding: '12px 0 30px',
           animation: 'slideUp 0.25s ease',
         }}

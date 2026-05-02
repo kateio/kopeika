@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Transaction, Category, CurrencyCode } from '@/types';
 import { Icon } from './Icon';
+import { useScrollLock } from '@/lib/useScrollLock';
 
 interface TransactionEditorProps {
   transaction: Transaction;
@@ -17,6 +18,7 @@ export function TransactionEditor({
   onDelete,
   onClose,
 }: TransactionEditorProps) {
+  useScrollLock(true);
   const [amount, setAmount] = useState(String(transaction.amount));
   const [currency, setCurrency] = useState<CurrencyCode>(transaction.currency);
   const [categoryId, setCategoryId] = useState(transaction.categoryId);
@@ -42,14 +44,14 @@ export function TransactionEditor({
     <div
       onClick={onClose}
       className="fixed inset-0 z-[100] flex items-end"
-      style={{ background: 'rgba(0,0,0,0.4)', animation: 'fadeIn 0.2s ease' }}
+      style={{ background: 'rgba(0,0,0,0.4)', animation: 'fadeIn 0.2s ease', overscrollBehavior: 'contain' }}
     >
       <div
         onClick={(e) => e.stopPropagation()}
         className="flex w-full flex-col bg-bg"
         style={{
-          borderTopLeftRadius: 28,
-          borderTopRightRadius: 28,
+          borderTopLeftRadius: 24,
+          borderTopRightRadius: 24,
           padding: '12px 0 30px',
           maxHeight: '85vh',
           animation: 'slideUp 0.25s ease',
@@ -90,15 +92,15 @@ export function TransactionEditor({
                 inputMode="decimal"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="flex-1 rounded-DEFAULT border border-border bg-card px-4 py-3 text-[16px] text-fg outline-none"
+                className="flex-1 rounded-input border border-border bg-card px-4 py-3 text-[16px] text-fg outline-none"
                 style={{ fontFamily: 'inherit' }}
               />
-              <div className="flex gap-1 rounded-DEFAULT bg-card p-1">
+              <div className="flex gap-1 rounded-input bg-card p-1">
                 {(['RUB', 'USD'] as CurrencyCode[]).map((c) => (
                   <button
                     key={c}
                     onClick={() => setCurrency(c)}
-                    className="rounded-[12px] border-none px-3 py-2 text-sm font-semibold transition-all"
+                    className="rounded-pill border-none px-3 py-2 text-sm font-semibold transition-all"
                     style={{
                       background: currency === c ? '#FAF8F4' : 'transparent',
                       color: currency === c ? '#1A1A1E' : '#7C7C82',
@@ -123,7 +125,7 @@ export function TransactionEditor({
                 <button
                   key={cat.id}
                   onClick={() => setCategoryId(cat.id)}
-                  className="flex items-center gap-1.5 rounded-DEFAULT border-none px-3 py-2 text-sm font-medium transition-all"
+                  className="flex items-center gap-1.5 rounded-pill border-none px-3 py-2 text-sm font-medium transition-all"
                   style={{
                     background: categoryId === cat.id ? '#1A1A1E' : '#FFFFFF',
                     color: categoryId === cat.id ? '#FAF8F4' : '#1A1A1E',
@@ -146,7 +148,7 @@ export function TransactionEditor({
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full rounded-DEFAULT border border-border bg-card px-4 py-3 text-[16px] text-fg outline-none"
+              className="w-full rounded-input border border-border bg-card px-4 py-3 text-[16px] text-fg outline-none"
               style={{ fontFamily: 'inherit' }}
             />
           </div>
@@ -161,7 +163,7 @@ export function TransactionEditor({
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder="Добавить описание..."
-              className="w-full rounded-DEFAULT border border-border bg-card px-4 py-3 text-[16px] text-fg outline-none"
+              className="w-full rounded-input border border-border bg-card px-4 py-3 text-[16px] text-fg outline-none"
               style={{ fontFamily: 'inherit' }}
             />
           </div>
@@ -171,14 +173,14 @@ export function TransactionEditor({
         <div className="flex gap-3 px-6">
           <button
             onClick={() => onDelete(transaction.id)}
-            className="flex-1 rounded-DEFAULT border-none py-3.5 text-[15px] font-semibold"
+            className="flex-1 rounded-button border-none py-3.5 text-[15px] font-semibold"
             style={{ background: '#FEE2E2', color: '#DC2626', cursor: 'pointer' }}
           >
             Удалить
           </button>
           <button
             onClick={handleSave}
-            className="flex-[2] rounded-DEFAULT border-none py-3.5 text-[15px] font-semibold"
+            className="flex-[2] rounded-button border-none py-3.5 text-[15px] font-semibold"
             style={{ background: '#D4F26A', color: '#000', cursor: 'pointer' }}
           >
             Сохранить
