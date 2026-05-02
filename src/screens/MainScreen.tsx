@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { useApp, useToast } from '@/store';
 import { Icon } from '@/components/Icon';
 import { CatDot } from '@/components/CatDot';
@@ -30,6 +30,7 @@ export function MainScreen({ onGoToStart }: MainScreenProps) {
   const [editingTx, setEditingTx] = useState<Transaction | null>(null);
   const [showSummary, setShowSummary] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const year = 2026;
 
@@ -101,6 +102,9 @@ export function MainScreen({ onGoToStart }: MainScreenProps) {
       setFilterCategoryId(null);
     } else {
       setFilterCategoryId(catId);
+      setTimeout(() => {
+        scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 50);
     }
   };
 
@@ -260,8 +264,28 @@ export function MainScreen({ onGoToStart }: MainScreenProps) {
         />
       </div>
 
+      {/* Sticky filter chip */}
+      {filterCategory && (
+        <div className="shrink-0 flex items-center gap-2 px-6 py-2" style={{ background: '#FAF8F4' }}>
+          <div
+            className="flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-medium"
+            style={{ background: '#1A1A1E', color: '#FAF8F4' }}
+          >
+            <span>{filterCategory.icon}</span>
+            <span>{filterCategory.name}</span>
+            <button
+              onClick={() => setFilterCategoryId(null)}
+              className="flex items-center border-none bg-transparent p-0"
+              style={{ cursor: 'pointer' }}
+            >
+              {Icon.close('#FAF8F4', 12)}
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Scrollable content */}
-      <div className="flex-1 overflow-auto">
+      <div ref={scrollRef} className="flex-1 overflow-auto">
         {/* Donut chart */}
         <div className="flex justify-center px-6 pb-4 pt-2">
           <DonutChart total={total} segments={donutSegments} mode={mode} />
@@ -314,26 +338,6 @@ export function MainScreen({ onGoToStart }: MainScreenProps) {
           </div>
         </div>
 
-        {/* Filter chip */}
-        {filterCategory && (
-          <div className="flex items-center gap-2 px-6 pt-4">
-            <div
-              className="flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-medium"
-              style={{ background: '#1A1A1E', color: '#FAF8F4' }}
-            >
-              <span>{filterCategory.icon}</span>
-              <span>{filterCategory.name}</span>
-              <button
-                onClick={() => setFilterCategoryId(null)}
-                className="flex items-center border-none bg-transparent p-0"
-                style={{ cursor: 'pointer' }}
-              >
-                {Icon.close('#FAF8F4', 12)}
-              </button>
-            </div>
-          </div>
-        )}
-
         {/* Transaction list */}
         <div className="pt-4 pb-2">
           <TransactionList
@@ -347,7 +351,7 @@ export function MainScreen({ onGoToStart }: MainScreenProps) {
       </div>
 
       {/* Input bar */}
-      <div className="sticky bottom-0 px-4 pb-5 pt-3" style={{ background: '#FAF8F4' }}>
+      <div className="shrink-0 px-4 pt-3" style={{ background: '#FAF8F4', paddingBottom: 'max(20px, env(safe-area-inset-bottom))' }}>
         <InputBar
           value={draft}
           onChange={setDraft}
