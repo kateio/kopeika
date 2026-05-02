@@ -39,7 +39,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {toast && (
         <div className="fixed bottom-24 left-4 right-4 z-[200] flex justify-center">
           <div
-            className="flex items-center gap-2.5 rounded-DEFAULT px-4 py-3 text-sm shadow-lg"
+            className="flex items-center gap-2.5 rounded-card px-4 py-3 text-sm shadow-lg"
             style={{
               background: '#1A1A1E',
               color: '#FAF8F4',

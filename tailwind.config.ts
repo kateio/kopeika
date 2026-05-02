@@ -24,8 +24,11 @@ const config: Config = {
       },
       borderRadius: {
         DEFAULT: '16px',
+        input: '14px',
+        button: '16px',
         card: '20px',
-        modal: '28px',
+        pill: '9999px',
+        sheet: '24px',
       },
     },
   },
