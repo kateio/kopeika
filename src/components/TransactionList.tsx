@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { Transaction, Category } from '@/types';
 import { dayLabel } from '@/lib/dateLabel';
 import { SwipeableRow } from './SwipeableRow';
@@ -40,6 +41,7 @@ export function TransactionList({
   onDelete,
   onEdit,
 }: TransactionListProps) {
+  const [openRowId, setOpenRowId] = useState<string | null>(null);
   const groups = groupByDay(transactions);
   const catMap = new Map(categories.map((c) => [c.id, c]));
 
@@ -72,6 +74,9 @@ export function TransactionList({
               return (
                 <SwipeableRow
                   key={tx.id}
+                  rowId={tx.id}
+                  openRowId={openRowId}
+                  onOpenChange={setOpenRowId}
                   onSwipeLeft={() => onDelete(tx)}
                   onSwipeRight={() => onEdit(tx)}
                 >
