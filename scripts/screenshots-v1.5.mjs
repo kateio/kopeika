@@ -8,6 +8,7 @@ const browser = await chromium.launch();
 const context = await browser.newContext({
   viewport: { width: 390, height: 844 },
   deviceScaleFactor: 3,
+  hasTouch: true,
 });
 const page = await context.newPage();
 const BASE = 'http://localhost:5173';
@@ -24,85 +25,128 @@ console.log('Снимаю скриншоты v1.5...');
 await page.goto(`${BASE}/start`, { waitUntil: 'networkidle' });
 await shot('01-start');
 
-// 02 — Main default (expenses, no filter)
+// 02 — Main default (expenses, no filter, InputBar fixed at bottom)
 await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
 await shot('02-main-default');
 
-// 03 — Main with drill-down filter (tap first category)
+// 03 — Main with drill-down filter (tap first category → sticky chip visible)
 const firstCat = await page.$('button:has-text("Еда")');
 if (firstCat) {
   await firstCat.click();
+  await page.waitForTimeout(300);
   await shot('03-main-with-filter');
-  // Reset filter
-  const chip = await page.$('button:has-text("Еда") >> xpath=ancestor::div[contains(@class,"rounded-full")]//button');
-  if (chip) await chip.click();
+  // Reset filter — tap chip close button
+  const chipClose = await page.$('.shrink-0 .rounded-full button');
+  if (chipClose) await chipClose.click();
   else {
     const resetCat = await page.$('button:has-text("Еда")');
     if (resetCat) await resetCat.click();
   }
 }
 
-// 04 — Summary sheet
+// 04 — Summary sheet (rounded corners, scroll locked)
 await page.waitForTimeout(300);
 const summaryBtn = await page.$('button:has(svg path[d*="M18 20V10"])');
 if (summaryBtn) {
   await summaryBtn.click();
   await shot('04-summary-sheet');
-  // Close
   const overlay = await page.$('.fixed.inset-0.z-\\[100\\]');
   if (overlay) await overlay.click({ position: { x: 195, y: 50 } });
   await page.waitForTimeout(400);
 }
 
-// 05 — Transaction editor (tap first transaction)
+// 05 — Transaction editor (rounded fields and buttons)
 await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(500);
-// Scroll to transactions
-await page.evaluate(() => window.scrollTo(0, 600));
+const scrollContainer = await page.$('.flex-1.overflow-auto');
+if (scrollContainer) await scrollContainer.evaluate(el => el.scrollTo(0, 600));
 await page.waitForTimeout(300);
 const txCard = await page.$('button:has-text("Пятёрочка")');
 if (txCard) {
   await txCard.click();
   await shot('05-edit-transaction');
-  // Close editor
   const closeBtn = await page.$('.fixed.inset-0 button:has(svg path[d*="M6 6l12 12"])');
   if (closeBtn) await closeBtn.click();
   await page.waitForTimeout(400);
 }
 
-// 06 — Swipe actions (hard to screenshot, we'll just show the list)
+// 06 — Swipe actions (simulate touch swipe to reveal delete button)
 await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
-await page.evaluate(() => window.scrollTo(0, 600));
 await page.waitForTimeout(500);
+const scrollArea = await page.$('.flex-1.overflow-auto');
+if (scrollArea) await scrollArea.evaluate(el => el.scrollTo(0, 400));
+await page.waitForTimeout(300);
+// Find a transaction row to swipe
+const txRow = await page.$('.rounded-card.bg-card .relative.overflow-hidden');
+if (txRow) {
+  const box = await txRow.boundingBox();
+  if (box) {
+    // Swipe left ~40% to reveal delete button
+    await page.touchscreen.tap(box.x + box.width - 30, box.y + box.height / 2);
+    await page.waitForTimeout(100);
+    const startX = box.x + box.width - 30;
+    const startY = box.y + box.height / 2;
+    await page.touchscreen.tap(startX, startY);
+    // Manual touch sequence for swipe
+    await page.evaluate(({ x, y, endX }) => {
+      const el = document.elementFromPoint(x, y);
+      if (!el) return;
+      const touch = new Touch({ identifier: 1, target: el, clientX: x, clientY: y });
+      el.dispatchEvent(new TouchEvent('touchstart', { touches: [touch], changedTouches: [touch], bubbles: true }));
+      const moveTouch = new Touch({ identifier: 1, target: el, clientX: endX, clientY: y });
+      el.dispatchEvent(new TouchEvent('touchmove', { touches: [moveTouch], changedTouches: [moveTouch], bubbles: true }));
+      const endTouch = new Touch({ identifier: 1, target: el, clientX: endX, clientY: y });
+      el.dispatchEvent(new TouchEvent('touchend', { touches: [], changedTouches: [endTouch], bubbles: true }));
+    }, { x: startX, y: startY, endX: startX - 150 });
+    await page.waitForTimeout(400);
+  }
+}
 await shot('06-swipe-actions');
 
-// 07 — Settings
+// 07 — Settings main screen (rounded corners)
 await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(300);
 const avatarBtn = await page.$('button:has-text("К")');
 if (avatarBtn) {
   await avatarBtn.click();
+  await page.waitForTimeout(400);
   await shot('07-settings');
 }
 
-// 08 — Settings categories (scroll down in settings)
-await page.waitForTimeout(300);
-await page.evaluate(() => {
-  const el = document.querySelector('.fixed.inset-0 .overflow-auto');
-  if (el) el.scrollTo(0, 300);
-});
-await shot('08-settings-categories');
+// 08 — Settings → Categories list (nested sub-screen)
+const catMenuItem = await page.$('.fixed.inset-0 button:has-text("Категории")');
+if (catMenuItem) {
+  await catMenuItem.click();
+  await page.waitForTimeout(400);
+  await shot('08-settings-categories-list');
+}
+
+// 09 — Settings → Category edit (tap first category)
+const firstEditCat = await page.$('.fixed.inset-0 .rounded-card button:has-text("Еда")');
+if (firstEditCat) {
+  await firstEditCat.click();
+  await page.waitForTimeout(400);
+  await shot('09-settings-category-edit');
+}
+
+// 10 — Emoji picker open
+const emojiField = await page.$('.fixed.inset-0 button:has-text("Выбрать эмодзи")');
+if (emojiField) {
+  await emojiField.click();
+  await page.waitForTimeout(800);
+  await shot('10-emoji-picker');
+}
 
 // Close settings
 const closeSettings = await page.$('.fixed.inset-0 button:has(svg path[d*="M6 6l12 12"])');
 if (closeSettings) await closeSettings.click();
 await page.waitForTimeout(400);
 
-// 09 — UIKit
+// 11 — UIKit
 await page.goto(`${BASE}/uikit`, { waitUntil: 'networkidle' });
-await shot('09-uikit-updated');
+await shot('11-uikit-updated');
 
-// 10 — Toast (add a transaction to trigger toast)
+// 12 — Toast (trigger by adding transaction)
 await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(500);
 const input = await page.$('input[placeholder]');
@@ -112,7 +156,7 @@ if (input) {
   const sendBtn = await page.$('button:has(svg path[d*="M5 12l14"])');
   if (sendBtn) await sendBtn.click();
   await page.waitForTimeout(400);
-  await shot('10-toast');
+  await shot('12-toast');
 }
 
 await browser.close();
