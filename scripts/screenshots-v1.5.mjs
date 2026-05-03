@@ -29,19 +29,32 @@ await shot('01-start');
 await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
 await shot('02-main-default');
 
-// 03 — Main with drill-down filter (tap first category → sticky chip visible)
+// 03 — Main with multi-select filter (tap 2 categories → multiple chips visible)
 const firstCat = await page.$('button:has-text("Еда")');
 if (firstCat) {
   await firstCat.click();
   await page.waitForTimeout(300);
-  await shot('03-main-with-filter');
-  // Reset filter — tap chip close button
-  const chipClose = await page.$('.shrink-0 .rounded-full button');
-  if (chipClose) await chipClose.click();
-  else {
-    const resetCat = await page.$('button:has-text("Еда")');
-    if (resetCat) await resetCat.click();
+}
+const secondCat = await page.$('button:has-text("Транспорт")');
+if (!secondCat) {
+  // Try another category name
+  const altCat = await page.$('button:has-text("Развлечения")');
+  if (altCat) {
+    await altCat.click();
+    await page.waitForTimeout(300);
   }
+} else {
+  await secondCat.click();
+  await page.waitForTimeout(300);
+}
+await shot('03-main-with-filter');
+// Reset filter
+const resetBtn = await page.$('button:has-text("Сбросить")');
+if (resetBtn) await resetBtn.click();
+else {
+  // Close chips individually
+  const chipCloses = await page.$$('.shrink-0 .rounded-full button');
+  for (const btn of chipCloses) await btn.click();
 }
 
 // 04 — Summary sheet (rounded corners, scroll locked)
@@ -157,6 +170,38 @@ if (input) {
   if (sendBtn) await sendBtn.click();
   await page.waitForTimeout(400);
   await shot('12-toast');
+}
+
+// 13 — Swipe commit zone (~80%)
+await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
+await page.waitForTimeout(500);
+const scrollArea2 = await page.$('.flex-1.overflow-auto');
+if (scrollArea2) await scrollArea2.evaluate(el => el.scrollTo(0, 400));
+await page.waitForTimeout(300);
+const txRow2 = await page.$('.rounded-card.bg-card .relative.overflow-hidden');
+if (txRow2) {
+  const box2 = await txRow2.boundingBox();
+  if (box2) {
+    const sx = box2.x + box2.width - 30;
+    const sy = box2.y + box2.height / 2;
+    await page.evaluate(({ x, y, endX }) => {
+      const el = document.elementFromPoint(x, y);
+      if (!el) return;
+      const touch = new Touch({ identifier: 1, target: el, clientX: x, clientY: y });
+      el.dispatchEvent(new TouchEvent('touchstart', { touches: [touch], changedTouches: [touch], bubbles: true }));
+      const moveTouch = new Touch({ identifier: 1, target: el, clientX: endX, clientY: y });
+      el.dispatchEvent(new TouchEvent('touchmove', { touches: [moveTouch], changedTouches: [moveTouch], bubbles: true }));
+    }, { x: sx, y: sy, endX: sx - 280 });
+    await page.waitForTimeout(400);
+    await shot('13-swipe-commit-zone');
+    // Release
+    await page.evaluate(({ x, y, endX }) => {
+      const el = document.elementFromPoint(endX, y);
+      if (!el) return;
+      const endTouch = new Touch({ identifier: 1, target: el, clientX: endX, clientY: y });
+      el.dispatchEvent(new TouchEvent('touchend', { touches: [], changedTouches: [endTouch], bubbles: true }));
+    }, { x: sx, y: sy, endX: sx - 280 });
+  }
 }
 
 await browser.close();
