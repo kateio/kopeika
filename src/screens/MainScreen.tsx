@@ -26,7 +26,7 @@ export function MainScreen({ onGoToStart }: MainScreenProps) {
   const [month, setMonth] = useState(3); // April (0-indexed)
   const [showMonths, setShowMonths] = useState(false);
   const [draft, setDraft] = useState('');
-  const [filterCategoryId, setFilterCategoryId] = useState<string | null>(null);
+  const [filterCategoryIds, setFilterCategoryIds] = useState<string[]>([]);
   const [editingTx, setEditingTx] = useState<Transaction | null>(null);
   const [showSummary, setShowSummary] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -76,46 +76,51 @@ export function MainScreen({ onGoToStart }: MainScreenProps) {
 
   // Filtered transactions for TransactionList
   const filteredTx = useMemo(() => {
-    if (!filterCategoryId) return monthTx;
-    return monthTx.filter((t) => t.categoryId === filterCategoryId);
-  }, [monthTx, filterCategoryId]);
+    if (filterCategoryIds.length === 0) return monthTx;
+    const ids = new Set(filterCategoryIds);
+    return monthTx.filter((t) => ids.has(t.categoryId));
+  }, [monthTx, filterCategoryIds]);
 
-  const filterCategory = filterCategoryId
-    ? state.categories.find((c) => c.id === filterCategoryId)
-    : null;
+  const filterCategories = useMemo(
+    () => state.categories.filter((c) => filterCategoryIds.includes(c.id)),
+    [state.categories, filterCategoryIds],
+  );
 
-  // Donut segments — highlight filtered category or show all
+  // Donut segments — highlight filtered categories or show all
   const donutSegments = useMemo(() => {
-    if (!filterCategoryId) {
+    if (filterCategoryIds.length === 0) {
       return byCat.map((c) => ({ name: c.name, amount: c.amount, color: c.color }));
     }
+    const ids = new Set(filterCategoryIds);
     return byCat.map((c) => ({
       name: c.name,
       amount: c.amount,
-      color: c.id === filterCategoryId ? c.color : '#EDE9E1',
+      color: ids.has(c.id) ? c.color : '#EDE9E1',
     }));
-  }, [byCat, filterCategoryId]);
+  }, [byCat, filterCategoryIds]);
 
-  // Handle category tap for drill-down filter
+  // Handle category tap for drill-down filter (multi-select toggle)
   const handleCategoryTap = (catId: string) => {
-    if (filterCategoryId === catId) {
-      setFilterCategoryId(null);
-    } else {
-      setFilterCategoryId(catId);
+    setFilterCategoryIds((prev) => {
+      if (prev.includes(catId)) {
+        return prev.filter((id) => id !== catId);
+      }
       setTimeout(() => {
         scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
       }, 50);
-    }
+      return [...prev, catId];
+    });
   };
 
-  // Handle mode change — reset filter if category doesn't exist in new mode
+  // Handle mode change — reset filter if categories don't exist in new mode
   const handleModeChange = (newMode: string) => {
     const m = newMode as 'expense' | 'income';
-    if (filterCategoryId) {
-      const cat = state.categories.find((c) => c.id === filterCategoryId);
-      if (cat && cat.type !== m) {
-        setFilterCategoryId(null);
-      }
+    if (filterCategoryIds.length > 0) {
+      const kept = filterCategoryIds.filter((id) => {
+        const cat = state.categories.find((c) => c.id === id);
+        return cat && cat.type === m;
+      });
+      setFilterCategoryIds(kept);
     }
     setMode(m);
   };
@@ -129,8 +134,8 @@ export function MainScreen({ onGoToStart }: MainScreenProps) {
     if (num <= 0) return;
 
     let categoryId: string;
-    if (filterCategoryId) {
-      categoryId = filterCategoryId;
+    if (filterCategoryIds.length === 1) {
+      categoryId = filterCategoryIds[0];
     } else {
       const matched = modeCategories.find(
         (c) => text.includes(c.name.toLowerCase().split(' ')[0]),
@@ -183,8 +188,8 @@ export function MainScreen({ onGoToStart }: MainScreenProps) {
   };
 
   // InputBar placeholder
-  const inputPlaceholder = filterCategory
-    ? `Добавить в ${filterCategory.name} — 500 кофе`
+  const inputPlaceholder = filterCategories.length === 1
+    ? `Добавить в ${filterCategories[0].name} — 500 кофе`
     : mode === 'expense'
       ? '100₽ такси'
       : 'расскажи про доход...';
@@ -264,23 +269,35 @@ export function MainScreen({ onGoToStart }: MainScreenProps) {
         />
       </div>
 
-      {/* Sticky filter chip */}
-      {filterCategory && (
-        <div className="shrink-0 flex items-center gap-2 px-6 py-2" style={{ background: '#FAF8F4' }}>
-          <div
-            className="flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-medium"
-            style={{ background: '#1A1A1E', color: '#FAF8F4' }}
-          >
-            <span>{filterCategory.icon}</span>
-            <span>{filterCategory.name}</span>
-            <button
-              onClick={() => setFilterCategoryId(null)}
-              className="flex items-center border-none bg-transparent p-0"
-              style={{ cursor: 'pointer' }}
+      {/* Sticky filter chips */}
+      {filterCategories.length > 0 && (
+        <div className="shrink-0 flex items-center gap-2 px-6 py-2 overflow-x-auto" style={{ background: '#FAF8F4' }}>
+          {filterCategories.map((cat) => (
+            <div
+              key={cat.id}
+              className="flex shrink-0 items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-medium"
+              style={{ background: '#1A1A1E', color: '#FAF8F4' }}
             >
-              {Icon.close('#FAF8F4', 12)}
+              <span>{cat.icon}</span>
+              <span>{cat.name}</span>
+              <button
+                onClick={() => setFilterCategoryIds((prev) => prev.filter((id) => id !== cat.id))}
+                className="flex items-center border-none bg-transparent p-0"
+                style={{ cursor: 'pointer' }}
+              >
+                {Icon.close('#FAF8F4', 12)}
+              </button>
+            </div>
+          ))}
+          {filterCategories.length > 1 && (
+            <button
+              onClick={() => setFilterCategoryIds([])}
+              className="shrink-0 rounded-full border-none px-3.5 py-1.5 text-sm font-medium"
+              style={{ background: '#EDE9E1', color: '#1A1A1E', cursor: 'pointer' }}
+            >
+              Сбросить
             </button>
-          </div>
+          )}
         </div>
       )}
 
@@ -317,7 +334,7 @@ export function MainScreen({ onGoToStart }: MainScreenProps) {
                   border: 'none',
                   borderTop: i > 0 ? '1px solid #EDE9E1' : 'none',
                   fontFamily: 'inherit',
-                  background: filterCategoryId === c.id ? '#D4F26A22' : 'transparent',
+                  background: filterCategoryIds.includes(c.id) ? '#D4F26A22' : 'transparent',
                 }}
               >
                 <CatDot color={c.color} size={36} radius={12} emoji={c.icon} />
