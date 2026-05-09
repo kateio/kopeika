@@ -1,0 +1,2206 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1600">
+  <title>Копейка — UI Kit + Экраны для Figma</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* ══════════════════════════════════════════════
+       RESET & BASE
+       ══════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #FAF8F4;
+      --fg: #1A1A1E;
+      --card: #FFFFFF;
+      --muted: #7C7C82;
+      --border: #EDE9E1;
+      --accent: #D4F26A;
+      --accent-coral: #FF8E72;
+      --accent-lavender: #C7B8FF;
+      --accent-mint: #9EE5C5;
+      --accent-yellow: #FFD66B;
+      --accent-pink: #FFB4D1;
+      --accent-blue: #A0D8FF;
+      --accent-peach: #FFCBA0;
+
+      --r-default: 16px;
+      --r-input: 14px;
+      --r-button: 16px;
+      --r-card: 20px;
+      --r-pill: 9999px;
+      --r-sheet: 24px;
+
+      --font: 'Inter Tight', -apple-system, system-ui, sans-serif;
+    }
+
+    body {
+      font-family: var(--font);
+      background: #EEEAE3;
+      color: var(--fg);
+      -webkit-font-smoothing: antialiased;
+      padding: 40px;
+      line-height: 1.4;
+    }
+
+    /* ══════════════════════════════════════════════
+       LAYOUT
+       ══════════════════════════════════════════════ */
+    .page-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .page-header h1 {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+    .page-header p {
+      font-size: 15px;
+      color: var(--muted);
+    }
+
+    .section {
+      margin-bottom: 64px;
+    }
+    .section > h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.6px;
+      margin-bottom: 32px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .blocks-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .blocks-grid .block--wide {
+      grid-column: 1 / -1;
+    }
+
+    .block {
+      background: var(--bg);
+      border-radius: var(--r-card);
+      padding: 28px;
+      border: 1px solid var(--border);
+    }
+    .block h2 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      letter-spacing: -0.3px;
+    }
+    .block h3 {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      margin-bottom: 12px;
+      margin-top: 20px;
+    }
+    .block h3:first-of-type { margin-top: 0; }
+
+    .screens-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 390px);
+      gap: 32px;
+    }
+
+    .screen-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .screen-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ══════════════════════════════════════════════
+       PHONE FRAME
+       ══════════════════════════════════════════════ */
+    .phone-frame {
+      width: 390px;
+      height: 844px;
+      border-radius: 44px;
+      background: var(--bg);
+      box-shadow: 0 0 0 3px #1A1A1E, 0 20px 60px rgba(0,0,0,0.18);
+      overflow: hidden;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .phone-frame--overlay {
+      background: var(--bg);
+    }
+
+    /* Status bar inside phone */
+    .status-bar {
+      height: 54px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0 28px 4px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .status-bar .time { font-variant-numeric: tabular-nums; }
+
+    /* ══════════════════════════════════════════════
+       UI KIT COMPONENT STYLES
+       ══════════════════════════════════════════════ */
+
+    /* — Colors — */
+    .color-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .color-chip {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      width: 80px;
+    }
+    .color-chip__swatch {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .color-chip__hex {
+      font-size: 11px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--fg);
+      font-family: var(--font);
+    }
+    .color-chip__name {
+      font-size: 10px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* — Typography — */
+    .type-sample {
+      margin-bottom: 16px;
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+    }
+    .type-sample__meta {
+      flex-shrink: 0;
+      width: 140px;
+      font-size: 11px;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+    .type-sample__text {
+      font-family: var(--font);
+    }
+
+    /* — Radius — */
+    .radius-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .radius-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .radius-item__box {
+      width: 80px;
+      height: 52px;
+      background: var(--card);
+      border: 2px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .radius-item__label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--fg);
+    }
+    .radius-item__value {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    /* — Buttons — */
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      padding: 14px 28px;
+      border-radius: var(--r-button);
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .btn--primary { background: var(--accent); color: #000; }
+    .btn--primary.btn--hover { background: #C8E660; color: #000; }
+    .btn--primary.btn--disabled { background: #EDE9E1; color: #A0A0A5; cursor: default; opacity: 0.6; }
+
+    .btn--secondary { background: var(--card); color: var(--fg); border: 1px solid var(--border); }
+    .btn--secondary.btn--hover { background: #F5F3EF; }
+    .btn--secondary.btn--disabled { background: #F5F3EF; color: #A0A0A5; opacity: 0.6; }
+
+    .btn--ghost { background: transparent; color: var(--fg); }
+    .btn--ghost.btn--hover { background: rgba(0,0,0,0.04); }
+    .btn--ghost.btn--disabled { color: #A0A0A5; opacity: 0.6; }
+
+    .btn--danger { background: #FEE2E2; color: #DC2626; }
+    .btn--danger.btn--hover { background: #FECACA; color: #B91C1C; }
+    .btn--danger.btn--disabled { background: #FEE2E2; color: #A0A0A5; opacity: 0.6; }
+
+    /* — Inputs — */
+    .input-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .input-field {
+      font-family: var(--font);
+      font-size: 16px;
+      color: var(--fg);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-input);
+      padding: 14px 16px;
+      outline: none;
+      width: 200px;
+    }
+    .input-field::placeholder { color: var(--muted); }
+    .input-field--focused { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(212,242,106,0.25); }
+    .input-field--error { border-color: #EF4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.15); }
+    .input-field--search {
+      background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='11' cy='11' r='7' stroke='%237C7C82' stroke-width='2'/%3E%3Cpath d='M16 16l4 4' stroke='%237C7C82' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: 14px center;
+      padding-left: 40px;
+    }
+
+    /* — Chips — */
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 14px;
+      border-radius: var(--r-pill);
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .chip--active {
+      background: var(--fg);
+      color: var(--bg);
+    }
+    .chip--inactive {
+      background: var(--card);
+      color: var(--fg);
+      border: 1px solid var(--border);
+    }
+    .chip__close {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    /* — Transaction card — */
+    .tx-card-demo {
+      margin-bottom: 16px;
+      border-radius: var(--r-card);
+      overflow: hidden;
+      background: var(--card);
+    }
+    .tx-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--card);
+      font-family: var(--font);
+    }
+    .tx-row + .tx-row { border-top: 1px solid var(--border); }
+    .tx-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .tx-info { flex: 1; min-width: 0; }
+    .tx-name { font-size: 15px; font-weight: 500; }
+    .tx-comment { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .tx-amount {
+      font-size: 15px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+    }
+    .tx-amount--income { color: #22C55E; }
+
+    /* Swipe states */
+    .tx-swipe-wrapper {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--r-card);
+      margin-bottom: 16px;
+    }
+    .tx-swipe-action {
+      position: absolute;
+      top: 0; bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: white;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .tx-swipe-action--delete {
+      right: 0;
+      width: 80px;
+      background: #EF4444;
+    }
+    .tx-swipe-action--delete-commit {
+      right: 0;
+      width: 210px;
+      background: #DC2626;
+    }
+    .tx-swipe-action--edit {
+      left: 0;
+      width: 80px;
+      background: #3B82F6;
+    }
+
+    /* — Toast — */
+    .toast-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .toast {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--fg);
+      color: var(--bg);
+      padding: 12px 18px;
+      border-radius: var(--r-card);
+      font-size: 14px;
+      font-family: var(--font);
+    }
+    .toast__icon { font-size: 18px; }
+    .toast__action {
+      font-weight: 600;
+      color: var(--accent);
+      margin-left: 8px;
+      cursor: pointer;
+    }
+
+    /* — Bottom sheet (preview in UI Kit) — */
+    .sheet-preview {
+      background: var(--bg);
+      border-radius: var(--r-sheet) var(--r-sheet) 0 0;
+      padding: 12px 0 24px;
+      box-shadow: 0 -8px 30px rgba(0,0,0,0.12);
+      max-width: 360px;
+    }
+    .sheet-grabber {
+      width: 40px;
+      height: 5px;
+      border-radius: 999px;
+      background: var(--border);
+      margin: 0 auto 16px;
+    }
+    .sheet-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px 16px;
+    }
+    .sheet-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--fg);
+      text-transform: none;
+      letter-spacing: -0.3px;
+      margin: 0;
+    }
+    .sheet-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--card);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    /* — Donut chart — */
+    .donut-row {
+      display: flex;
+      gap: 40px;
+      align-items: flex-start;
+    }
+    .donut-wrapper {
+      position: relative;
+      width: 240px;
+      height: 240px;
+      flex-shrink: 0;
+    }
+    .donut-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .donut-center__label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+    }
+    .donut-center__amount {
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--fg);
+      letter-spacing: -0.8px;
+      font-variant-numeric: tabular-nums;
+      margin-top: 4px;
+    }
+
+    /* — Category row in screens — */
+    .cat-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: var(--card);
+      font-family: var(--font);
+    }
+    .cat-row + .cat-row { border-top: 1px solid var(--border); }
+    .cat-dot {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .cat-info { flex: 1; }
+    .cat-name { font-size: 16px; font-weight: 500; }
+    .cat-pct { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .cat-amount {
+      font-size: 16px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* — Segmented control — */
+    .seg-ctrl {
+      display: flex;
+      gap: 4px;
+      background: var(--card);
+      border-radius: var(--r-pill);
+      padding: 4px;
+    }
+    .seg-ctrl__item {
+      flex: 1;
+      text-align: center;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 8px;
+      border-radius: var(--r-pill);
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .seg-ctrl__item--active {
+      background: var(--bg);
+      color: var(--fg);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .seg-ctrl__item--inactive {
+      background: transparent;
+      color: var(--muted);
+    }
+
+    /* — InputBar — */
+    .input-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: var(--r-pill);
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 8px 8px 8px 14px;
+    }
+    .input-bar__clip {
+      flex-shrink: 0;
+      background: none;
+      border: none;
+      padding: 6px;
+      display: flex;
+      cursor: pointer;
+    }
+    .input-bar__input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-family: var(--font);
+      font-size: 15px;
+      color: var(--fg);
+      outline: none;
+      padding: 8px 0;
+    }
+    .input-bar__input::placeholder { color: var(--muted); }
+    .input-bar__send {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--r-input);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    /* — Filter chip bar — */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 24px;
+      overflow-x: auto;
+    }
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--fg);
+      color: var(--bg);
+      padding: 6px 14px;
+      border-radius: var(--r-pill);
+      font-size: 14px;
+      font-weight: 500;
+      font-family: var(--font);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .filter-chip__close {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      display: flex;
+    }
+    .filter-reset {
+      background: var(--border);
+      color: var(--fg);
+      border: none;
+      padding: 6px 14px;
+      border-radius: var(--r-pill);
+      font-size: 14px;
+      font-weight: 500;
+      font-family: var(--font);
+      white-space: nowrap;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    /* — Settings menu row — */
+    .settings-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--card);
+      font-family: var(--font);
+      border: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+    }
+    .settings-row + .settings-row { border-top: 1px solid var(--border); }
+    .settings-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .settings-label { flex: 1; font-size: 15px; font-weight: 500; }
+    .settings-meta { font-size: 12px; color: var(--muted); margin-right: 4px; }
+
+    /* — Emoji grid — */
+    .emoji-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 2px;
+      padding: 8px;
+    }
+    .emoji-cell {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .emoji-cell:hover { background: rgba(0,0,0,0.04); }
+
+    /* — Color picker row — */
+    .color-picker-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .color-pick {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+    .color-pick--selected {
+      outline: 2px solid var(--fg);
+      outline-offset: 2px;
+    }
+
+    /* ══════════════════════════════════════════════
+       SCREEN-SPECIFIC OVERRIDES
+       ══════════════════════════════════════════════ */
+
+    /* Inside phone: full-height flex column */
+    .screen-content {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font);
+    }
+
+    /* Overlay for bottom sheets inside phone */
+    .screen-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      display: flex;
+      align-items: flex-end;
+      z-index: 10;
+    }
+    .screen-sheet {
+      width: 100%;
+      background: var(--bg);
+      border-radius: var(--r-sheet) var(--r-sheet) 0 0;
+      padding: 12px 0 30px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- HEADER                                         -->
+<!-- ═══════════════════════════════════════════════ -->
+<header class="page-header">
+  <h1>Копейка — UI Kit + Экраны</h1>
+  <p>Компоненты и экраны для импорта в Figma через html.to.design</p>
+</header>
+
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- СЕКЦИЯ 1: UI KIT                                          -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section">
+  <h1>Секция 1 — UI Kit</h1>
+
+  <div class="blocks-grid">
+
+    <!-- ─── Блок 1: Цвета палитры ─── -->
+    <div class="block block--wide">
+      <h2>1. Цвета палитры</h2>
+      <div class="color-grid">
+        <div class="color-chip">
+          <div class="color-chip__swatch" style="background:#FAF8F4"></div>
+          <div class="color-chip__hex">#FAF8F4</div>
+          <div class="color-chip__name">bg</div>
+        </div>
+        <div class="color-chip">
+          <div class="color-chip__swatch" style="background:#1A1A1E"></div>
+          <div class="color-chip__hex">#1A1A1E</div>
+          <div class="color-chip__name">fg</div>
+        </div>
+        <div class="color-chip">
+          <div class="color-chip__swatch" style="background:#FFFFFF"></div>
+          <div class="color-chip__hex">#FFFFFF</div>
+          <div class="color-chip__name">card</div>
+        </div>
+        <div class="color-chip">
+          <div class="color-chip__swatch" style="background:#7C7C82"></div>
+          <div class="color-chip__hex">#7C7C82</div>
+          <div class="color-chip__name">muted</div>
+        </div>
+        <div class="color-chip">
+          <div class="color-chip__swatch" style="background:#EDE9E1"></div>
+          <div class="color-chip__hex">#EDE9E1</div>
+          <div class="color-chip__name">border</div>
+        </div>
+        <div class="color-chip">
+          <div class="color-chip__swatch" style="background:#D4F26A"></div>
+          <div class="color-chip__hex">#D4F26A</div>
+          <div class="color-chip__name">accent</div>
+        </div>
+        <div class="color-chip">
+          <div class="color-chip__swatch" style="background:#FF8E72"></div>
+          <div class="color-chip__hex">#FF8E72</div>
+          <div class="color-chip__name">accent-coral</div>
+        </div>
+        <div class="color-chip">
+          <div class="color-chip__swatch" style="background:#C7B8FF"></div>
+          <div class="color-chip__hex">#C7B8FF</div>
+          <div class="color-chip__name">accent-lavender</div>
+        </div>
+        <div class="color-chip">
+          <div class="color-chip__swatch" style="background:#9EE5C5"></div>
+          <div class="color-chip__hex">#9EE5C5</div>
+          <div class="color-chip__name">accent-mint</div>
+        </div>
+        <div class="color-chip">
+          <div class="color-chip__swatch" style="background:#FFD66B"></div>
+          <div class="color-chip__hex">#FFD66B</div>
+          <div class="color-chip__name">accent-yellow</div>
+        </div>
+        <div class="color-chip">
+          <div class="color-chip__swatch" style="background:#FFB4D1"></div>
+          <div class="color-chip__hex">#FFB4D1</div>
+          <div class="color-chip__name">accent-pink</div>
+        </div>
+        <div class="color-chip">
+          <div class="color-chip__swatch" style="background:#A0D8FF"></div>
+          <div class="color-chip__hex">#A0D8FF</div>
+          <div class="color-chip__name">accent-blue</div>
+        </div>
+        <div class="color-chip">
+          <div class="color-chip__swatch" style="background:#FFCBA0"></div>
+          <div class="color-chip__hex">#FFCBA0</div>
+          <div class="color-chip__name">accent-peach</div>
+        </div>
+        <!-- Semantic colors -->
+        <div class="color-chip">
+          <div class="color-chip__swatch" style="background:#22C55E"></div>
+          <div class="color-chip__hex">#22C55E</div>
+          <div class="color-chip__name">income / green</div>
+        </div>
+        <div class="color-chip">
+          <div class="color-chip__swatch" style="background:#DC2626"></div>
+          <div class="color-chip__hex">#DC2626</div>
+          <div class="color-chip__name">danger / red</div>
+        </div>
+        <div class="color-chip">
+          <div class="color-chip__swatch" style="background:#EF4444"></div>
+          <div class="color-chip__hex">#EF4444</div>
+          <div class="color-chip__name">delete swipe</div>
+        </div>
+        <div class="color-chip">
+          <div class="color-chip__swatch" style="background:#3B82F6"></div>
+          <div class="color-chip__hex">#3B82F6</div>
+          <div class="color-chip__name">edit swipe</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ─── Блок 2: Типографика ─── -->
+    <div class="block block--wide">
+      <h2>2. Типографика</h2>
+      <div class="type-sample">
+        <div class="type-sample__meta">32px / 700 / -0.8</div>
+        <div class="type-sample__text" style="font-size:32px;font-weight:700;letter-spacing:-0.8px">Копейка</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-sample__meta">28px / 700 / -0.6</div>
+        <div class="type-sample__text" style="font-size:28px;font-weight:700;letter-spacing:-0.6px">Апрель</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-sample__meta">22px / 700 / -0.4</div>
+        <div class="type-sample__text" style="font-size:22px;font-weight:700;letter-spacing:-0.4px">+347 301 ₽</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-sample__meta">20px / 700</div>
+        <div class="type-sample__text" style="font-size:20px;font-weight:700">Настройки</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-sample__meta">17px / 600</div>
+        <div class="type-sample__text" style="font-size:17px;font-weight:600">Поехали</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-sample__meta">16px / 500</div>
+        <div class="type-sample__text" style="font-size:16px;font-weight:500">Еда</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-sample__meta">16px / 600 / tabular</div>
+        <div class="type-sample__text" style="font-size:16px;font-weight:600;font-variant-numeric:tabular-nums">10 360 ₽</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-sample__meta">15px / 500</div>
+        <div class="type-sample__text" style="font-size:15px;font-weight:500">Пятёрочка</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-sample__meta">15px / 400</div>
+        <div class="type-sample__text" style="font-size:15px;font-weight:400">Помогает отслеживать финансы</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-sample__meta">14px / 600</div>
+        <div class="type-sample__text" style="font-size:14px;font-weight:600">траты</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-sample__meta">13px / 600 / upper</div>
+        <div class="type-sample__text" style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.6px">Категории</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-sample__meta">12px / 400</div>
+        <div class="type-sample__text" style="font-size:12px;font-weight:400;color:var(--muted)">Яндекс.Такси аэропорт</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-sample__meta">11px / 600 / upper</div>
+        <div class="type-sample__text" style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted)">Топ категорий трат</div>
+      </div>
+      <div class="type-sample">
+        <div class="type-sample__meta">30px / 700 / tabular</div>
+        <div class="type-sample__text" style="font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-0.8px">48 799 ₽</div>
+      </div>
+    </div>
+
+
+    <!-- ─── Блок 3: Скругления ─── -->
+    <div class="block">
+      <h2>3. Скругления</h2>
+      <div class="radius-grid">
+        <div class="radius-item">
+          <div class="radius-item__box" style="border-radius:14px">14px</div>
+          <div class="radius-item__label">input</div>
+          <div class="radius-item__value">14px</div>
+        </div>
+        <div class="radius-item">
+          <div class="radius-item__box" style="border-radius:16px">16px</div>
+          <div class="radius-item__label">button</div>
+          <div class="radius-item__value">16px</div>
+        </div>
+        <div class="radius-item">
+          <div class="radius-item__box" style="border-radius:20px">20px</div>
+          <div class="radius-item__label">card</div>
+          <div class="radius-item__value">20px</div>
+        </div>
+        <div class="radius-item">
+          <div class="radius-item__box" style="border-radius:9999px">pill</div>
+          <div class="radius-item__label">pill</div>
+          <div class="radius-item__value">9999px</div>
+        </div>
+        <div class="radius-item">
+          <div class="radius-item__box" style="border-radius:24px">24px</div>
+          <div class="radius-item__label">sheet</div>
+          <div class="radius-item__value">24px</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ─── Блок 4: Кнопки ─── -->
+    <div class="block">
+      <h2>4. Кнопки</h2>
+
+      <h3>Primary</h3>
+      <div class="btn-row">
+        <button class="btn btn--primary">Поехали</button>
+        <button class="btn btn--primary btn--hover">Hover</button>
+        <button class="btn btn--primary btn--disabled">Disabled</button>
+      </div>
+
+      <h3>Secondary</h3>
+      <div class="btn-row">
+        <button class="btn btn--secondary">Отмена</button>
+        <button class="btn btn--secondary btn--hover">Hover</button>
+        <button class="btn btn--secondary btn--disabled">Disabled</button>
+      </div>
+
+      <h3>Ghost</h3>
+      <div class="btn-row">
+        <button class="btn btn--ghost">← старт</button>
+        <button class="btn btn--ghost btn--hover">Hover</button>
+        <button class="btn btn--ghost btn--disabled">Disabled</button>
+      </div>
+
+      <h3>Danger</h3>
+      <div class="btn-row">
+        <button class="btn btn--danger">Удалить</button>
+        <button class="btn btn--danger btn--hover">Hover</button>
+        <button class="btn btn--danger btn--disabled">Disabled</button>
+      </div>
+    </div>
+
+
+    <!-- ─── Блок 5: Поля ввода ─── -->
+    <div class="block">
+      <h2>5. Поля ввода</h2>
+
+      <h3>Text</h3>
+      <div class="input-row">
+        <input class="input-field" type="text" placeholder="Добавить описание...">
+        <input class="input-field" type="text" value="Пятёрочка">
+        <input class="input-field input-field--focused" type="text" value="Кофе на вынос">
+        <input class="input-field input-field--error" type="text" value="">
+      </div>
+      <div style="display:flex;gap:12px;margin-top:-8px;margin-bottom:12px;padding-left:2px">
+        <span style="width:200px;font-size:11px;color:var(--muted)">empty</span>
+        <span style="width:200px;font-size:11px;color:var(--muted)">filled</span>
+        <span style="width:200px;font-size:11px;color:var(--muted)">focused</span>
+        <span style="width:200px;font-size:11px;color:#EF4444">error</span>
+      </div>
+
+      <h3>Number</h3>
+      <div class="input-row">
+        <input class="input-field" type="text" placeholder="0" style="width:140px;font-variant-numeric:tabular-nums">
+        <input class="input-field" type="text" value="2 340" style="width:140px;font-variant-numeric:tabular-nums">
+      </div>
+
+      <h3>Search</h3>
+      <div class="input-row">
+        <input class="input-field input-field--search" type="text" placeholder="Поиск...">
+        <input class="input-field input-field--search" type="text" value="кофе">
+      </div>
+    </div>
+
+
+    <!-- ─── Блок 6: Чипы ─── -->
+    <div class="block">
+      <h2>6. Чипы (фильтр категорий)</h2>
+
+      <h3>Активные (выбранные)</h3>
+      <div class="chip-row" style="margin-bottom:16px">
+        <div class="chip chip--active">
+          <span>🍕</span> Еда
+          <span class="chip__close">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#FAF8F4" stroke-width="2" stroke-linecap="round"/></svg>
+          </span>
+        </div>
+        <div class="chip chip--active">
+          <span>🚕</span> Транспорт
+          <span class="chip__close">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#FAF8F4" stroke-width="2" stroke-linecap="round"/></svg>
+          </span>
+        </div>
+        <div class="chip chip--active">
+          <span>💅</span> Уход за собой
+          <span class="chip__close">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#FAF8F4" stroke-width="2" stroke-linecap="round"/></svg>
+          </span>
+        </div>
+      </div>
+
+      <h3>Неактивные</h3>
+      <div class="chip-row" style="margin-bottom:16px">
+        <div class="chip chip--inactive"><span>📱</span> Подписки</div>
+        <div class="chip chip--inactive"><span>🎁</span> Непредвиденные</div>
+        <div class="chip chip--inactive"><span>🏠</span> Дом</div>
+        <div class="chip chip--inactive"><span>🎮</span> Развлечения</div>
+      </div>
+
+      <h3>Чипы в категориях (StartScreen)</h3>
+      <div class="chip-row">
+        <div class="chip" style="background:var(--fg);color:var(--bg);border-radius:16px;height:40px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="#FAF8F4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          еда
+        </div>
+        <div class="chip" style="background:var(--fg);color:var(--bg);border-radius:16px;height:40px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="#FAF8F4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          транспорт
+        </div>
+        <div class="chip" style="background:var(--card);color:var(--fg);border-radius:16px;height:40px">
+          дом
+        </div>
+        <div class="chip" style="border:1.5px dashed var(--border);background:transparent;color:var(--muted);border-radius:16px;height:40px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#7C7C82" stroke-width="1.8" stroke-linecap="round"/></svg>
+          добавить
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ─── Блок 7: Карточки транзакций ─── -->
+    <div class="block block--wide">
+      <h2>7. Карточки транзакций</h2>
+
+      <h3>Обычное состояние</h3>
+      <div class="tx-card-demo" style="max-width:380px">
+        <div class="tx-row">
+          <div class="tx-icon" style="background:#D4F26A">🍕</div>
+          <div class="tx-info">
+            <div class="tx-name">Еда</div>
+            <div class="tx-comment">Пятёрочка</div>
+          </div>
+          <div class="tx-amount">2 340 ₽</div>
+        </div>
+        <div class="tx-row">
+          <div class="tx-icon" style="background:#FFB4D1">🚕</div>
+          <div class="tx-info">
+            <div class="tx-name">Транспорт</div>
+            <div class="tx-comment">Яндекс.Такси</div>
+          </div>
+          <div class="tx-amount">450 ₽</div>
+        </div>
+        <div class="tx-row">
+          <div class="tx-icon" style="background:#9EE5C5">💰</div>
+          <div class="tx-info">
+            <div class="tx-name">Зарплата</div>
+            <div class="tx-comment">Зарплата апрель</div>
+          </div>
+          <div class="tx-amount tx-amount--income">+165 000 ₽</div>
+        </div>
+      </div>
+
+      <h3>Свайп: reveal (80px, кнопки видны)</h3>
+      <div style="display:flex;gap:24px;flex-wrap:wrap">
+        <!-- Swipe left: delete revealed -->
+        <div class="tx-swipe-wrapper" style="max-width:380px;flex:1">
+          <div class="tx-swipe-action tx-swipe-action--delete">
+            <span style="font-size:18px">🗑️</span>
+            <span>Удалить</span>
+          </div>
+          <div class="tx-row" style="transform:translateX(-80px);border-radius:var(--r-card)">
+            <div class="tx-icon" style="background:#C7B8FF">📱</div>
+            <div class="tx-info">
+              <div class="tx-name">Подписки</div>
+              <div class="tx-comment">YouTube Premium</div>
+            </div>
+            <div class="tx-amount">1 290 ₽</div>
+          </div>
+        </div>
+        <!-- Swipe right: edit revealed -->
+        <div class="tx-swipe-wrapper" style="max-width:380px;flex:1">
+          <div class="tx-swipe-action tx-swipe-action--edit">
+            <span style="font-size:18px">✏️</span>
+            <span>Изменить</span>
+          </div>
+          <div class="tx-row" style="transform:translateX(80px);border-radius:var(--r-card)">
+            <div class="tx-icon" style="background:#9EE5C5">💅</div>
+            <div class="tx-info">
+              <div class="tx-name">Уход за собой</div>
+              <div class="tx-comment">Маникюр</div>
+            </div>
+            <div class="tx-amount">3 200 ₽</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Свайп: commit (>70%, подтверждение)</h3>
+      <div style="display:flex;gap:24px;flex-wrap:wrap">
+        <div class="tx-swipe-wrapper" style="max-width:380px;flex:1">
+          <div class="tx-swipe-action tx-swipe-action--delete-commit">
+            <span style="font-size:18px;transform:scale(1.05)">🗑️</span>
+            <span>Удалить</span>
+          </div>
+          <div class="tx-row" style="transform:translateX(-210px);border-radius:var(--r-card)">
+            <div class="tx-icon" style="background:#FF8E72">🎁</div>
+            <div class="tx-info">
+              <div class="tx-name">Непредвиденные</div>
+              <div class="tx-comment">Ремонт телефона</div>
+            </div>
+            <div class="tx-amount">3 500 ₽</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ─── Блок 8: Тосты ─── -->
+    <div class="block">
+      <h2>8. Тосты</h2>
+      <div class="toast-row">
+        <div class="toast">
+          <span class="toast__icon">✅</span>
+          Транзакция добавлена
+        </div>
+        <div class="toast">
+          <span class="toast__icon">🗑️</span>
+          Транзакция удалена
+          <span class="toast__action">Отменить</span>
+        </div>
+        <div class="toast">
+          <span class="toast__icon">⚠️</span>
+          Нельзя удалить последнюю категорию
+        </div>
+        <div class="toast">
+          <span class="toast__icon">📎</span>
+          Прикрепи выписку из банка
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ─── Блок 9: Bottom Sheets (превью) ─── -->
+    <div class="block block--wide">
+      <h2>9. Bottom Sheets</h2>
+      <div style="display:flex;gap:24px;flex-wrap:wrap">
+
+        <!-- TransactionEditor preview -->
+        <div class="sheet-preview" style="flex:1;min-width:320px">
+          <div class="sheet-grabber"></div>
+          <div class="sheet-header">
+            <h3>Редактирование</h3>
+            <button class="sheet-close">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#7C7C82" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          <div style="padding:0 24px">
+            <div style="margin-bottom:12px">
+              <label style="display:block;font-size:11px;font-weight:600;text-transform:uppercase;color:var(--muted);letter-spacing:0.5px;margin-bottom:6px">Сумма</label>
+              <div style="display:flex;gap:8px">
+                <input class="input-field" type="text" value="2 340" style="flex:1;width:auto">
+                <div style="display:flex;gap:4px;background:var(--card);border-radius:var(--r-input);padding:4px">
+                  <button style="background:var(--bg);border:none;border-radius:var(--r-pill);padding:8px 12px;font-size:14px;font-weight:600;font-family:var(--font);box-shadow:0 2px 8px rgba(0,0,0,0.06)">₽</button>
+                  <button style="background:transparent;border:none;border-radius:var(--r-pill);padding:8px 12px;font-size:14px;font-weight:600;font-family:var(--font);color:var(--muted)">$</button>
+                </div>
+              </div>
+            </div>
+            <div style="margin-bottom:12px">
+              <label style="display:block;font-size:11px;font-weight:600;text-transform:uppercase;color:var(--muted);letter-spacing:0.5px;margin-bottom:6px">Категория</label>
+              <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <span class="chip chip--active" style="padding:8px 12px;font-size:13px">🍕 Еда</span>
+                <span class="chip chip--inactive" style="padding:8px 12px;font-size:13px">🚕 Транспорт</span>
+                <span class="chip chip--inactive" style="padding:8px 12px;font-size:13px">💅 Уход</span>
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:16px">
+              <button class="btn btn--danger" style="flex:1;padding:14px 16px">Удалить</button>
+              <button class="btn btn--primary" style="flex:2;padding:14px 16px">Сохранить</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings preview -->
+        <div class="sheet-preview" style="flex:1;min-width:320px">
+          <div class="sheet-grabber"></div>
+          <div class="sheet-header">
+            <h3>Настройки</h3>
+            <button class="sheet-close">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#7C7C82" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          <div style="padding:0 16px">
+            <div style="background:var(--card);border-radius:var(--r-card);padding:16px;margin-bottom:12px">
+              <div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--muted);letter-spacing:1px;margin-bottom:12px">Валюта по умолчанию</div>
+              <div class="seg-ctrl">
+                <div class="seg-ctrl__item seg-ctrl__item--active">₽ Рубль</div>
+                <div class="seg-ctrl__item seg-ctrl__item--inactive">$ Доллар</div>
+              </div>
+            </div>
+            <div style="background:var(--card);border-radius:var(--r-card);overflow:hidden">
+              <div class="settings-row">
+                <div class="settings-icon">📋</div>
+                <span class="settings-label">Категории</span>
+                <span class="settings-meta">12</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#7C7C82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SummarySheet preview -->
+        <div class="sheet-preview" style="flex:1;min-width:320px">
+          <div class="sheet-grabber"></div>
+          <div class="sheet-header">
+            <h3>Сводка за апрель</h3>
+            <button class="sheet-close">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#7C7C82" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          <div style="padding:0 24px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+              <span style="font-size:15px;color:var(--muted)">Доходы</span>
+              <span style="font-size:20px;font-weight:700;color:#22C55E;font-variant-numeric:tabular-nums">+405 000 ₽</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+              <span style="font-size:15px;color:var(--muted)">Расходы</span>
+              <span style="font-size:20px;font-weight:700;color:var(--fg);font-variant-numeric:tabular-nums">−57 699 ₽</span>
+            </div>
+            <div style="border-top:1px solid var(--border);padding-top:16px;display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:15px;font-weight:500">Остаток</span>
+              <span style="font-size:22px;font-weight:700;color:#22C55E;font-variant-numeric:tabular-nums">+347 301 ₽</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ─── Блок 10: Donut Chart ─── -->
+    <div class="block block--wide">
+      <h2>10. Donut Chart</h2>
+      <div class="donut-row">
+
+        <!-- Normal donut -->
+        <div style="text-align:center">
+          <h3 style="margin-bottom:16px">Обычный</h3>
+          <div class="donut-wrapper">
+            <svg width="240" height="240" style="transform:rotate(-90deg)">
+              <circle cx="120" cy="120" r="92" fill="none" stroke="oklch(0.75 0.16 73)" stroke-width="18" stroke-dasharray="119.72 578.05" stroke-dashoffset="0" stroke-linecap="butt"/>
+              <circle cx="120" cy="120" r="92" fill="none" stroke="oklch(0.75 0.16 110)" stroke-width="18" stroke-dasharray="118.39 578.05" stroke-dashoffset="-122.72" stroke-linecap="butt"/>
+              <circle cx="120" cy="120" r="92" fill="none" stroke="oklch(0.75 0.16 147)" stroke-width="18" stroke-dasharray="76.97 578.05" stroke-dashoffset="-244.11" stroke-linecap="butt"/>
+              <circle cx="120" cy="120" r="92" fill="none" stroke="oklch(0.75 0.16 184)" stroke-width="18" stroke-dasharray="56.25 578.05" stroke-dashoffset="-324.08" stroke-linecap="butt"/>
+              <circle cx="120" cy="120" r="92" fill="none" stroke="oklch(0.75 0.16 221)" stroke-width="18" stroke-dasharray="50.30 578.05" stroke-dashoffset="-383.33" stroke-linecap="butt"/>
+              <circle cx="120" cy="120" r="92" fill="none" stroke="oklch(0.75 0.16 258)" stroke-width="18" stroke-dasharray="38.44 578.05" stroke-dashoffset="-436.63" stroke-linecap="butt"/>
+              <circle cx="120" cy="120" r="92" fill="none" stroke="oklch(0.75 0.16 295)" stroke-width="18" stroke-dasharray="36.71 578.05" stroke-dashoffset="-478.07" stroke-linecap="butt"/>
+              <circle cx="120" cy="120" r="92" fill="none" stroke="oklch(0.75 0.16 332)" stroke-width="18" stroke-dasharray="21.28 578.05" stroke-dashoffset="-517.78" stroke-linecap="butt"/>
+              <circle cx="120" cy="120" r="92" fill="none" stroke="oklch(0.75 0.16 9)" stroke-width="18" stroke-dasharray="15.21 578.05" stroke-dashoffset="-542.06" stroke-linecap="butt"/>
+              <circle cx="120" cy="120" r="92" fill="none" stroke="oklch(0.75 0.16 46)" stroke-width="18" stroke-dasharray="14.80 578.05" stroke-dashoffset="-560.27" stroke-linecap="butt"/>
+            </svg>
+            <div class="donut-center">
+              <div class="donut-center__label">всего трат</div>
+              <div class="donut-center__amount">48 799 ₽</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filtered donut (only Еда highlighted) -->
+        <div style="text-align:center">
+          <h3 style="margin-bottom:16px">С фильтром (Еда)</h3>
+          <div class="donut-wrapper">
+            <svg width="240" height="240" style="transform:rotate(-90deg)">
+              <circle cx="120" cy="120" r="92" fill="none" stroke="oklch(0.75 0.16 73)" stroke-width="18" stroke-dasharray="119.72 578.05" stroke-dashoffset="0" stroke-linecap="butt"/>
+              <circle cx="120" cy="120" r="92" fill="none" stroke="#EDE9E1" stroke-width="18" stroke-dasharray="118.39 578.05" stroke-dashoffset="-122.72" stroke-linecap="butt"/>
+              <circle cx="120" cy="120" r="92" fill="none" stroke="#EDE9E1" stroke-width="18" stroke-dasharray="76.97 578.05" stroke-dashoffset="-244.11" stroke-linecap="butt"/>
+              <circle cx="120" cy="120" r="92" fill="none" stroke="#EDE9E1" stroke-width="18" stroke-dasharray="56.25 578.05" stroke-dashoffset="-324.08" stroke-linecap="butt"/>
+              <circle cx="120" cy="120" r="92" fill="none" stroke="#EDE9E1" stroke-width="18" stroke-dasharray="50.30 578.05" stroke-dashoffset="-383.33" stroke-linecap="butt"/>
+              <circle cx="120" cy="120" r="92" fill="none" stroke="#EDE9E1" stroke-width="18" stroke-dasharray="38.44 578.05" stroke-dashoffset="-436.63" stroke-linecap="butt"/>
+              <circle cx="120" cy="120" r="92" fill="none" stroke="#EDE9E1" stroke-width="18" stroke-dasharray="36.71 578.05" stroke-dashoffset="-478.07" stroke-linecap="butt"/>
+              <circle cx="120" cy="120" r="92" fill="none" stroke="#EDE9E1" stroke-width="18" stroke-dasharray="21.28 578.05" stroke-dashoffset="-517.78" stroke-linecap="butt"/>
+              <circle cx="120" cy="120" r="92" fill="none" stroke="#EDE9E1" stroke-width="18" stroke-dasharray="15.21 578.05" stroke-dashoffset="-542.06" stroke-linecap="butt"/>
+              <circle cx="120" cy="120" r="92" fill="none" stroke="#EDE9E1" stroke-width="18" stroke-dasharray="14.80 578.05" stroke-dashoffset="-560.27" stroke-linecap="butt"/>
+            </svg>
+            <div class="donut-center">
+              <div class="donut-center__label">всего трат</div>
+              <div class="donut-center__amount">48 799 ₽</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Donut legend -->
+        <div style="padding-top:36px">
+          <h3 style="margin-bottom:12px">Легенда</h3>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:8px"><div style="width:14px;height:14px;border-radius:4px;background:oklch(0.75 0.16 73)"></div><span style="font-size:13px">Еда — 21%</span></div>
+            <div style="display:flex;align-items:center;gap:8px"><div style="width:14px;height:14px;border-radius:4px;background:oklch(0.75 0.16 110)"></div><span style="font-size:13px">Дом — 21%</span></div>
+            <div style="display:flex;align-items:center;gap:8px"><div style="width:14px;height:14px;border-radius:4px;background:oklch(0.75 0.16 147)"></div><span style="font-size:13px">Одежда — 14%</span></div>
+            <div style="display:flex;align-items:center;gap:8px"><div style="width:14px;height:14px;border-radius:4px;background:oklch(0.75 0.16 184)"></div><span style="font-size:13px">Уход — 10%</span></div>
+            <div style="display:flex;align-items:center;gap:8px"><div style="width:14px;height:14px;border-radius:4px;background:oklch(0.75 0.16 221)"></div><span style="font-size:13px">Здоровье — 9%</span></div>
+            <div style="display:flex;align-items:center;gap:8px"><div style="width:14px;height:14px;border-radius:4px;background:oklch(0.75 0.16 258)"></div><span style="font-size:13px">Непредвид. — 7%</span></div>
+            <div style="display:flex;align-items:center;gap:8px"><div style="width:14px;height:14px;border-radius:4px;background:oklch(0.75 0.16 295)"></div><span style="font-size:13px">Транспорт — 7%</span></div>
+            <div style="display:flex;align-items:center;gap:8px"><div style="width:14px;height:14px;border-radius:4px;background:oklch(0.75 0.16 332)"></div><span style="font-size:13px">Кафе — 4%</span></div>
+            <div style="display:flex;align-items:center;gap:8px"><div style="width:14px;height:14px;border-radius:4px;background:oklch(0.75 0.16 9)"></div><span style="font-size:13px">Развлечения — 3%</span></div>
+            <div style="display:flex;align-items:center;gap:8px"><div style="width:14px;height:14px;border-radius:4px;background:oklch(0.75 0.16 46)"></div><span style="font-size:13px">Подписки — 3%</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /blocks-grid -->
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- СЕКЦИЯ 2: ЭКРАНЫ                                          -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section">
+  <h1>Секция 2 — Экраны</h1>
+
+  <div class="screens-grid">
+
+    <!-- ─── Экран 1: StartScreen ─── -->
+    <div class="screen-wrapper">
+      <div class="phone-frame">
+        <div class="screen-content">
+          <!-- Logo + Tagline -->
+          <div style="display:flex;flex-direction:column;align-items:center;padding:80px 32px 24px">
+            <div style="width:104px;height:104px;border-radius:32px;background:var(--accent);box-shadow:0 18px 44px rgba(212,242,106,0.4),inset 0 -6px 12px rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;margin-bottom:28px">
+              <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+                <path d="M10 32 L18 20 L24 26 L34 12" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="34" cy="12" r="3" fill="#000"/>
+              </svg>
+            </div>
+            <div style="font-size:32px;font-weight:700;letter-spacing:-0.8px">Копейка</div>
+            <p style="color:var(--muted);font-size:15px;text-align:center;margin-top:10px;max-width:300px;line-height:1.5">Помогает отслеживать финансы так, как удобно тебе: пиши, говори или прикрепляй выписки.</p>
+          </div>
+
+          <!-- Category chooser -->
+          <div style="flex:1;overflow:auto;padding:24px 24px 0">
+            <div style="font-size:13px;font-weight:500;text-transform:uppercase;color:var(--muted);letter-spacing:0.6px;margin-bottom:12px;padding-left:4px">Выбери категории трат</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <button style="display:flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:16px;background:var(--fg);color:var(--bg);border:none;font-size:15px;font-weight:500;font-family:var(--font)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="#FAF8F4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                еда
+              </button>
+              <button style="display:flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:16px;background:var(--fg);color:var(--bg);border:none;font-size:15px;font-weight:500;font-family:var(--font)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="#FAF8F4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                транспорт
+              </button>
+              <button style="display:flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:16px;background:var(--fg);color:var(--bg);border:none;font-size:15px;font-weight:500;font-family:var(--font)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="#FAF8F4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                уход за собой
+              </button>
+              <button style="display:flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:16px;background:var(--fg);color:var(--bg);border:none;font-size:15px;font-weight:500;font-family:var(--font)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="#FAF8F4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                подписки
+              </button>
+              <button style="display:flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:16px;background:var(--fg);color:var(--bg);border:none;font-size:15px;font-weight:500;font-family:var(--font)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="#FAF8F4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                непредвиденные
+              </button>
+              <button style="display:flex;align-items:center;height:40px;padding:0 16px;border-radius:16px;background:var(--card);color:var(--fg);border:none;font-size:15px;font-weight:500;font-family:var(--font)">дом</button>
+              <button style="display:flex;align-items:center;height:40px;padding:0 16px;border-radius:16px;background:var(--card);color:var(--fg);border:none;font-size:15px;font-weight:500;font-family:var(--font)">развлечения</button>
+              <button style="display:flex;align-items:center;height:40px;padding:0 16px;border-radius:16px;background:var(--card);color:var(--fg);border:none;font-size:15px;font-weight:500;font-family:var(--font)">здоровье</button>
+              <button style="display:flex;align-items:center;gap:6px;height:40px;padding:0 14px;border-radius:16px;background:transparent;color:var(--muted);border:1.5px dashed var(--border);font-size:15px;font-weight:500;font-family:var(--font)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#7C7C82" stroke-width="1.8" stroke-linecap="round"/></svg>
+                добавить
+              </button>
+            </div>
+          </div>
+
+          <!-- CTA -->
+          <div style="padding:16px 24px 40px;background:var(--bg)">
+            <button style="width:100%;padding:18px;border-radius:22px;background:var(--accent);color:#000;border:none;font-size:17px;font-weight:600;font-family:var(--font);box-shadow:0 8px 24px rgba(212,242,106,0.4)">Поехали</button>
+            <div style="text-align:center;font-size:13px;color:var(--muted);margin-top:14px">Можно изменить в любой момент</div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-label">1. StartScreen</div>
+    </div>
+
+
+    <!-- ─── Экран 2: MainScreen — без фильтра ─── -->
+    <div class="screen-wrapper">
+      <div class="phone-frame">
+        <div class="screen-content">
+          <!-- Header -->
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:56px 24px 12px">
+            <button style="display:flex;align-items:center;gap:6px;border:none;background:transparent;font-size:28px;font-weight:700;font-family:var(--font);letter-spacing:-0.6px;color:var(--fg);cursor:pointer">
+              Апрель
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="margin-top:4px"><path d="M6 9l6 6 6-6" stroke="#7C7C82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div style="display:flex;gap:8px">
+              <button style="width:38px;height:38px;border-radius:12px;background:var(--card);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 20V10M12 20V4M6 20v-6" stroke="#7C7C82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <button style="width:38px;height:38px;border-radius:12px;background:var(--card);border:none;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer">К</button>
+            </div>
+          </div>
+
+          <!-- Segmented control -->
+          <div style="padding:4px 24px 16px">
+            <div class="seg-ctrl">
+              <div class="seg-ctrl__item seg-ctrl__item--active">траты</div>
+              <div class="seg-ctrl__item seg-ctrl__item--inactive">доходы</div>
+            </div>
+          </div>
+
+          <!-- Scrollable content -->
+          <div style="flex:1;overflow:hidden">
+            <!-- Donut -->
+            <div style="display:flex;justify-content:center;padding:8px 24px 16px">
+              <div class="donut-wrapper" style="width:200px;height:200px">
+                <svg width="200" height="200" style="transform:rotate(-90deg)">
+                  <circle cx="100" cy="100" r="76" fill="none" stroke="oklch(0.75 0.16 73)" stroke-width="16" stroke-dasharray="98.8 477.5" stroke-dashoffset="0"/>
+                  <circle cx="100" cy="100" r="76" fill="none" stroke="oklch(0.75 0.16 110)" stroke-width="16" stroke-dasharray="97.2 477.5" stroke-dashoffset="-101.3"/>
+                  <circle cx="100" cy="100" r="76" fill="none" stroke="oklch(0.75 0.16 147)" stroke-width="16" stroke-dasharray="63.0 477.5" stroke-dashoffset="-201.0"/>
+                  <circle cx="100" cy="100" r="76" fill="none" stroke="oklch(0.75 0.16 184)" stroke-width="16" stroke-dasharray="45.9 477.5" stroke-dashoffset="-266.5"/>
+                  <circle cx="100" cy="100" r="76" fill="none" stroke="oklch(0.75 0.16 221)" stroke-width="16" stroke-dasharray="41.0 477.5" stroke-dashoffset="-314.9"/>
+                  <circle cx="100" cy="100" r="76" fill="none" stroke="oklch(0.75 0.16 258)" stroke-width="16" stroke-dasharray="31.2 477.5" stroke-dashoffset="-358.4"/>
+                  <circle cx="100" cy="100" r="76" fill="none" stroke="oklch(0.75 0.16 295)" stroke-width="16" stroke-dasharray="29.8 477.5" stroke-dashoffset="-392.1"/>
+                  <circle cx="100" cy="100" r="76" fill="none" stroke="oklch(0.75 0.16 332)" stroke-width="16" stroke-dasharray="17.1 477.5" stroke-dashoffset="-424.4"/>
+                  <circle cx="100" cy="100" r="76" fill="none" stroke="oklch(0.75 0.16 9)" stroke-width="16" stroke-dasharray="12.1 477.5" stroke-dashoffset="-444.0"/>
+                  <circle cx="100" cy="100" r="76" fill="none" stroke="oklch(0.75 0.16 46)" stroke-width="16" stroke-dasharray="11.7 477.5" stroke-dashoffset="-458.6"/>
+                </svg>
+                <div class="donut-center">
+                  <div class="donut-center__label" style="font-size:10px">всего трат</div>
+                  <div class="donut-center__amount" style="font-size:24px">48 799 ₽</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Categories header -->
+            <div style="display:flex;justify-content:space-between;padding:8px 20px 8px;font-size:13px;font-weight:500;text-transform:uppercase;color:var(--muted);letter-spacing:0.6px">
+              <span>Категории</span>
+              <span>10</span>
+            </div>
+
+            <!-- Category list -->
+            <div style="margin:0 16px;border-radius:var(--r-card);background:var(--card);overflow:hidden">
+              <div class="cat-row">
+                <div class="cat-dot" style="background:#D4F26A">🍕</div>
+                <div class="cat-info"><div class="cat-name">Еда</div><div class="cat-pct">21%</div></div>
+                <div class="cat-amount">10 360 ₽</div>
+              </div>
+              <div class="cat-row">
+                <div class="cat-dot" style="background:#FFD66B">🏠</div>
+                <div class="cat-info"><div class="cat-name">Дом</div><div class="cat-pct">21%</div></div>
+                <div class="cat-amount">10 250 ₽</div>
+              </div>
+              <div class="cat-row">
+                <div class="cat-dot" style="background:#D4F26A">👗</div>
+                <div class="cat-info"><div class="cat-name">Одежда</div><div class="cat-pct">14%</div></div>
+                <div class="cat-amount">6 750 ₽</div>
+              </div>
+              <div class="cat-row">
+                <div class="cat-dot" style="background:#9EE5C5">💅</div>
+                <div class="cat-info"><div class="cat-name">Уход за собой</div><div class="cat-pct">10%</div></div>
+                <div class="cat-amount">5 000 ₽</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- InputBar -->
+          <div style="padding:12px 16px 20px;background:var(--bg);flex-shrink:0">
+            <div class="input-bar">
+              <button class="input-bar__clip">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M21 11.5l-8.5 8.5a5.5 5.5 0 01-7.78-7.78L13.5 4a3.85 3.85 0 015.45 5.45l-8.5 8.5a2.2 2.2 0 11-3.11-3.11L14.5 7.5" stroke="#7C7C82" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <input class="input-bar__input" type="text" placeholder="100₽ такси" readonly>
+              <button class="input-bar__send" style="background:var(--border)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12l14-7-5 16-3-7-6-2z" stroke="#1A1A1E" stroke-width="1.6" stroke-linejoin="round" fill="#1A1A1E" fill-opacity="0.15"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-label">2. MainScreen — без фильтра</div>
+    </div>
+
+
+    <!-- ─── Экран 3: MainScreen — 1 фильтр ─── -->
+    <div class="screen-wrapper">
+      <div class="phone-frame">
+        <div class="screen-content">
+          <!-- Header -->
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:56px 24px 12px">
+            <button style="display:flex;align-items:center;gap:6px;border:none;background:transparent;font-size:28px;font-weight:700;font-family:var(--font);letter-spacing:-0.6px;color:var(--fg)">
+              Апрель
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="margin-top:4px"><path d="M6 9l6 6 6-6" stroke="#7C7C82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div style="display:flex;gap:8px">
+              <button style="width:38px;height:38px;border-radius:12px;background:var(--card);border:none;display:flex;align-items:center;justify-content:center">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 20V10M12 20V4M6 20v-6" stroke="#7C7C82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <button style="width:38px;height:38px;border-radius:12px;background:var(--card);border:none;font-size:14px;font-weight:600;color:var(--muted)">К</button>
+            </div>
+          </div>
+
+          <!-- Segmented control -->
+          <div style="padding:4px 24px 16px">
+            <div class="seg-ctrl">
+              <div class="seg-ctrl__item seg-ctrl__item--active">траты</div>
+              <div class="seg-ctrl__item seg-ctrl__item--inactive">доходы</div>
+            </div>
+          </div>
+
+          <!-- Filter chip -->
+          <div class="filter-bar">
+            <div class="filter-chip">
+              <span>🍕</span>
+              <span>Еда</span>
+              <button class="filter-chip__close">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#FAF8F4" stroke-width="2" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Scrollable content -->
+          <div style="flex:1;overflow:hidden">
+            <!-- Filtered donut -->
+            <div style="display:flex;justify-content:center;padding:4px 24px 16px">
+              <div class="donut-wrapper" style="width:200px;height:200px">
+                <svg width="200" height="200" style="transform:rotate(-90deg)">
+                  <circle cx="100" cy="100" r="76" fill="none" stroke="oklch(0.75 0.16 73)" stroke-width="16" stroke-dasharray="98.8 477.5" stroke-dashoffset="0"/>
+                  <circle cx="100" cy="100" r="76" fill="none" stroke="#EDE9E1" stroke-width="16" stroke-dasharray="97.2 477.5" stroke-dashoffset="-101.3"/>
+                  <circle cx="100" cy="100" r="76" fill="none" stroke="#EDE9E1" stroke-width="16" stroke-dasharray="63.0 477.5" stroke-dashoffset="-201.0"/>
+                  <circle cx="100" cy="100" r="76" fill="none" stroke="#EDE9E1" stroke-width="16" stroke-dasharray="45.9 477.5" stroke-dashoffset="-266.5"/>
+                  <circle cx="100" cy="100" r="76" fill="none" stroke="#EDE9E1" stroke-width="16" stroke-dasharray="41.0 477.5" stroke-dashoffset="-358.4"/>
+                  <circle cx="100" cy="100" r="76" fill="none" stroke="#EDE9E1" stroke-width="16" stroke-dasharray="31.2 477.5" stroke-dashoffset="-314.9"/>
+                  <circle cx="100" cy="100" r="76" fill="none" stroke="#EDE9E1" stroke-width="16" stroke-dasharray="29.8 477.5" stroke-dashoffset="-392.1"/>
+                  <circle cx="100" cy="100" r="76" fill="none" stroke="#EDE9E1" stroke-width="16" stroke-dasharray="17.1 477.5" stroke-dashoffset="-424.4"/>
+                  <circle cx="100" cy="100" r="76" fill="none" stroke="#EDE9E1" stroke-width="16" stroke-dasharray="12.1 477.5" stroke-dashoffset="-444.0"/>
+                  <circle cx="100" cy="100" r="76" fill="none" stroke="#EDE9E1" stroke-width="16" stroke-dasharray="11.7 477.5" stroke-dashoffset="-458.6"/>
+                </svg>
+                <div class="donut-center">
+                  <div class="donut-center__label" style="font-size:10px">всего трат</div>
+                  <div class="donut-center__amount" style="font-size:24px">48 799 ₽</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Category list (Еда highlighted) -->
+            <div style="display:flex;justify-content:space-between;padding:8px 20px 8px;font-size:13px;font-weight:500;text-transform:uppercase;color:var(--muted);letter-spacing:0.6px">
+              <span>Категории</span><span>10</span>
+            </div>
+            <div style="margin:0 16px;border-radius:var(--r-card);background:var(--card);overflow:hidden">
+              <div class="cat-row" style="background:rgba(212,242,106,0.13)">
+                <div class="cat-dot" style="background:#D4F26A">🍕</div>
+                <div class="cat-info"><div class="cat-name">Еда</div><div class="cat-pct">21%</div></div>
+                <div class="cat-amount">10 360 ₽</div>
+              </div>
+              <div class="cat-row">
+                <div class="cat-dot" style="background:#FFD66B">🏠</div>
+                <div class="cat-info"><div class="cat-name">Дом</div><div class="cat-pct">21%</div></div>
+                <div class="cat-amount">10 250 ₽</div>
+              </div>
+              <div class="cat-row">
+                <div class="cat-dot" style="background:#D4F26A">👗</div>
+                <div class="cat-info"><div class="cat-name">Одежда</div><div class="cat-pct">14%</div></div>
+                <div class="cat-amount">6 750 ₽</div>
+              </div>
+            </div>
+
+            <!-- Transaction list (filtered to Еда) -->
+            <div style="padding-top:16px">
+              <div style="padding:8px 16px;font-size:12px;font-weight:600;text-transform:uppercase;color:var(--muted);letter-spacing:0.5px;background:var(--bg)">25 апреля</div>
+              <div style="margin:0 16px;border-radius:var(--r-card);background:var(--card);overflow:hidden">
+                <div class="tx-row">
+                  <div class="tx-icon" style="background:#D4F26A">🍕</div>
+                  <div class="tx-info"><div class="tx-name">Еда</div><div class="tx-comment">Магнит</div></div>
+                  <div class="tx-amount">2 100 ₽</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- InputBar -->
+          <div style="padding:12px 16px 20px;background:var(--bg);flex-shrink:0">
+            <div class="input-bar">
+              <button class="input-bar__clip">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M21 11.5l-8.5 8.5a5.5 5.5 0 01-7.78-7.78L13.5 4a3.85 3.85 0 015.45 5.45l-8.5 8.5a2.2 2.2 0 11-3.11-3.11L14.5 7.5" stroke="#7C7C82" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <input class="input-bar__input" type="text" placeholder="Добавить в Еда — 500 кофе" readonly>
+              <button class="input-bar__send" style="background:var(--border)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12l14-7-5 16-3-7-6-2z" stroke="#1A1A1E" stroke-width="1.6" stroke-linejoin="round" fill="#1A1A1E" fill-opacity="0.15"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-label">3. MainScreen — 1 фильтр</div>
+    </div>
+
+
+    <!-- ─── Экран 4: MainScreen — multi-фильтр ─── -->
+    <div class="screen-wrapper">
+      <div class="phone-frame">
+        <div class="screen-content">
+          <!-- Header -->
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:56px 24px 12px">
+            <button style="display:flex;align-items:center;gap:6px;border:none;background:transparent;font-size:28px;font-weight:700;font-family:var(--font);letter-spacing:-0.6px;color:var(--fg)">
+              Апрель
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="margin-top:4px"><path d="M6 9l6 6 6-6" stroke="#7C7C82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div style="display:flex;gap:8px">
+              <button style="width:38px;height:38px;border-radius:12px;background:var(--card);border:none;display:flex;align-items:center;justify-content:center">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 20V10M12 20V4M6 20v-6" stroke="#7C7C82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <button style="width:38px;height:38px;border-radius:12px;background:var(--card);border:none;font-size:14px;font-weight:600;color:var(--muted)">К</button>
+            </div>
+          </div>
+
+          <!-- Segmented control -->
+          <div style="padding:4px 24px 16px">
+            <div class="seg-ctrl">
+              <div class="seg-ctrl__item seg-ctrl__item--active">траты</div>
+              <div class="seg-ctrl__item seg-ctrl__item--inactive">доходы</div>
+            </div>
+          </div>
+
+          <!-- Multi-filter chips -->
+          <div class="filter-bar">
+            <div class="filter-chip">
+              <span>🍕</span> <span>Еда</span>
+              <button class="filter-chip__close"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#FAF8F4" stroke-width="2" stroke-linecap="round"/></svg></button>
+            </div>
+            <div class="filter-chip">
+              <span>🚕</span> <span>Транспорт</span>
+              <button class="filter-chip__close"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#FAF8F4" stroke-width="2" stroke-linecap="round"/></svg></button>
+            </div>
+            <button class="filter-reset">Сбросить</button>
+          </div>
+
+          <!-- Scrollable content -->
+          <div style="flex:1;overflow:hidden">
+            <!-- Filtered donut (2 highlighted) -->
+            <div style="display:flex;justify-content:center;padding:4px 24px 12px">
+              <div class="donut-wrapper" style="width:180px;height:180px">
+                <svg width="180" height="180" style="transform:rotate(-90deg)">
+                  <circle cx="90" cy="90" r="68" fill="none" stroke="oklch(0.75 0.16 73)" stroke-width="14" stroke-dasharray="88.0 427.3" stroke-dashoffset="0"/>
+                  <circle cx="90" cy="90" r="68" fill="none" stroke="#EDE9E1" stroke-width="14" stroke-dasharray="87.2 427.3" stroke-dashoffset="-90.5"/>
+                  <circle cx="90" cy="90" r="68" fill="none" stroke="#EDE9E1" stroke-width="14" stroke-dasharray="56.1 427.3" stroke-dashoffset="-180.2"/>
+                  <circle cx="90" cy="90" r="68" fill="none" stroke="#EDE9E1" stroke-width="14" stroke-dasharray="40.8 427.3" stroke-dashoffset="-238.8"/>
+                  <circle cx="90" cy="90" r="68" fill="none" stroke="#EDE9E1" stroke-width="14" stroke-dasharray="36.5 427.3" stroke-dashoffset="-282.1"/>
+                  <circle cx="90" cy="90" r="68" fill="none" stroke="#EDE9E1" stroke-width="14" stroke-dasharray="27.6 427.3" stroke-dashoffset="-321.1"/>
+                  <circle cx="90" cy="90" r="68" fill="none" stroke="oklch(0.75 0.16 295)" stroke-width="14" stroke-dasharray="26.4 427.3" stroke-dashoffset="-351.2"/>
+                  <circle cx="90" cy="90" r="68" fill="none" stroke="#EDE9E1" stroke-width="14" stroke-dasharray="15.0 427.3" stroke-dashoffset="-380.1"/>
+                  <circle cx="90" cy="90" r="68" fill="none" stroke="#EDE9E1" stroke-width="14" stroke-dasharray="10.5 427.3" stroke-dashoffset="-397.6"/>
+                  <circle cx="90" cy="90" r="68" fill="none" stroke="#EDE9E1" stroke-width="14" stroke-dasharray="10.2 427.3" stroke-dashoffset="-410.6"/>
+                </svg>
+                <div class="donut-center">
+                  <div class="donut-center__label" style="font-size:9px">всего трат</div>
+                  <div class="donut-center__amount" style="font-size:20px">48 799 ₽</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Category list -->
+            <div style="display:flex;justify-content:space-between;padding:4px 20px 8px;font-size:13px;font-weight:500;text-transform:uppercase;color:var(--muted);letter-spacing:0.6px">
+              <span>Категории</span><span>10</span>
+            </div>
+            <div style="margin:0 16px;border-radius:var(--r-card);background:var(--card);overflow:hidden">
+              <div class="cat-row" style="background:rgba(212,242,106,0.13)">
+                <div class="cat-dot" style="background:#D4F26A">🍕</div>
+                <div class="cat-info"><div class="cat-name">Еда</div><div class="cat-pct">21%</div></div>
+                <div class="cat-amount">10 360 ₽</div>
+              </div>
+              <div class="cat-row">
+                <div class="cat-dot" style="background:#FFD66B">🏠</div>
+                <div class="cat-info"><div class="cat-name">Дом</div><div class="cat-pct">21%</div></div>
+                <div class="cat-amount">10 250 ₽</div>
+              </div>
+              <div class="cat-row" style="background:rgba(212,242,106,0.13)">
+                <div class="cat-dot" style="background:#FFB4D1">🚕</div>
+                <div class="cat-info"><div class="cat-name">Транспорт</div><div class="cat-pct">7%</div></div>
+                <div class="cat-amount">3 350 ₽</div>
+              </div>
+            </div>
+
+            <!-- Transactions -->
+            <div style="padding-top:12px">
+              <div style="padding:8px 16px;font-size:12px;font-weight:600;text-transform:uppercase;color:var(--muted);letter-spacing:0.5px">19 апреля</div>
+              <div style="margin:0 16px;border-radius:var(--r-card);background:var(--card);overflow:hidden">
+                <div class="tx-row">
+                  <div class="tx-icon" style="background:#FFB4D1">🚕</div>
+                  <div class="tx-info"><div class="tx-name">Транспорт</div><div class="tx-comment">Каршеринг Ситидрайв</div></div>
+                  <div class="tx-amount">1 500 ₽</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- InputBar -->
+          <div style="padding:12px 16px 20px;background:var(--bg);flex-shrink:0">
+            <div class="input-bar">
+              <button class="input-bar__clip">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M21 11.5l-8.5 8.5a5.5 5.5 0 01-7.78-7.78L13.5 4a3.85 3.85 0 015.45 5.45l-8.5 8.5a2.2 2.2 0 11-3.11-3.11L14.5 7.5" stroke="#7C7C82" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <input class="input-bar__input" type="text" placeholder="100₽ такси" readonly>
+              <button class="input-bar__send" style="background:var(--border)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12l14-7-5 16-3-7-6-2z" stroke="#1A1A1E" stroke-width="1.6" stroke-linejoin="round" fill="#1A1A1E" fill-opacity="0.15"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-label">4. MainScreen — multi-фильтр</div>
+    </div>
+
+
+    <!-- ─── Экран 5: TransactionEditor ─── -->
+    <div class="screen-wrapper">
+      <div class="phone-frame phone-frame--overlay">
+        <!-- Background: MainScreen (dimmed) -->
+        <div class="screen-content" style="opacity:0.3">
+          <div style="padding:56px 24px 12px"><span style="font-size:28px;font-weight:700">Апрель</span></div>
+        </div>
+        <!-- Overlay -->
+        <div class="screen-overlay">
+          <div class="screen-sheet" style="max-height:85%">
+            <div class="sheet-grabber"></div>
+            <div class="sheet-header">
+              <h3>Редактирование</h3>
+              <button class="sheet-close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#7C7C82" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+            </div>
+            <div style="padding:0 24px;overflow:auto">
+              <!-- Amount -->
+              <div style="margin-bottom:16px">
+                <label style="display:block;font-size:11px;font-weight:600;text-transform:uppercase;color:var(--muted);letter-spacing:0.5px;margin-bottom:6px">Сумма</label>
+                <div style="display:flex;gap:8px">
+                  <input class="input-field" type="text" value="2 340" style="flex:1;width:auto">
+                  <div style="display:flex;gap:4px;background:var(--card);border-radius:var(--r-input);padding:4px">
+                    <button style="background:var(--bg);border:none;border-radius:var(--r-pill);padding:8px 12px;font-size:14px;font-weight:600;font-family:var(--font);box-shadow:0 2px 8px rgba(0,0,0,0.06)">₽</button>
+                    <button style="background:transparent;border:none;border-radius:var(--r-pill);padding:8px 12px;font-size:14px;font-weight:600;font-family:var(--font);color:var(--muted)">$</button>
+                  </div>
+                </div>
+              </div>
+              <!-- Category -->
+              <div style="margin-bottom:16px">
+                <label style="display:block;font-size:11px;font-weight:600;text-transform:uppercase;color:var(--muted);letter-spacing:0.5px;margin-bottom:6px">Категория</label>
+                <div style="display:flex;flex-wrap:wrap;gap:8px">
+                  <span class="chip chip--active" style="padding:8px 12px;font-size:13px">🍕 Еда</span>
+                  <span class="chip chip--inactive" style="padding:8px 12px;font-size:13px">🚕 Транспорт</span>
+                  <span class="chip chip--inactive" style="padding:8px 12px;font-size:13px">💅 Уход</span>
+                  <span class="chip chip--inactive" style="padding:8px 12px;font-size:13px">📱 Подписки</span>
+                  <span class="chip chip--inactive" style="padding:8px 12px;font-size:13px">🎁 Непредвид.</span>
+                  <span class="chip chip--inactive" style="padding:8px 12px;font-size:13px">🏠 Дом</span>
+                  <span class="chip chip--inactive" style="padding:8px 12px;font-size:13px">🎮 Развл.</span>
+                  <span class="chip chip--inactive" style="padding:8px 12px;font-size:13px">💊 Здоровье</span>
+                </div>
+              </div>
+              <!-- Date -->
+              <div style="margin-bottom:16px">
+                <label style="display:block;font-size:11px;font-weight:600;text-transform:uppercase;color:var(--muted);letter-spacing:0.5px;margin-bottom:6px">Дата</label>
+                <input class="input-field" type="text" value="2026-04-01" style="width:100%">
+              </div>
+              <!-- Comment -->
+              <div style="margin-bottom:24px">
+                <label style="display:block;font-size:11px;font-weight:600;text-transform:uppercase;color:var(--muted);letter-spacing:0.5px;margin-bottom:6px">Комментарий</label>
+                <input class="input-field" type="text" value="Пятёрочка" style="width:100%">
+              </div>
+              <!-- Actions -->
+              <div style="display:flex;gap:12px">
+                <button class="btn btn--danger" style="flex:1;padding:14px 16px">Удалить</button>
+                <button class="btn btn--primary" style="flex:2;padding:14px 16px">Сохранить</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-label">5. TransactionEditor</div>
+    </div>
+
+
+    <!-- ─── Экран 6: Settings root ─── -->
+    <div class="screen-wrapper">
+      <div class="phone-frame phone-frame--overlay">
+        <div class="screen-content" style="opacity:0.3">
+          <div style="padding:56px 24px 12px"><span style="font-size:28px;font-weight:700">Апрель</span></div>
+        </div>
+        <div class="screen-overlay">
+          <div class="screen-sheet" style="height:90%;max-height:90%">
+            <div class="sheet-grabber"></div>
+            <div class="sheet-header">
+              <h3>Настройки</h3>
+              <button class="sheet-close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#7C7C82" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+            </div>
+            <div style="padding:0 16px">
+              <!-- Currency -->
+              <div style="background:var(--card);border-radius:var(--r-card);padding:16px;margin-bottom:16px">
+                <div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--muted);letter-spacing:1px;margin-bottom:12px">Валюта по умолчанию</div>
+                <div class="seg-ctrl">
+                  <div class="seg-ctrl__item seg-ctrl__item--active">₽ Рубль</div>
+                  <div class="seg-ctrl__item seg-ctrl__item--inactive">$ Доллар</div>
+                </div>
+              </div>
+              <!-- Categories -->
+              <div style="background:var(--card);border-radius:var(--r-card);overflow:hidden;margin-bottom:16px">
+                <div class="settings-row">
+                  <div class="settings-icon">📋</div>
+                  <span class="settings-label">Категории</span>
+                  <span class="settings-meta">12</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#7C7C82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+              </div>
+              <!-- About -->
+              <div style="background:var(--card);border-radius:var(--r-card);padding:16px">
+                <div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--muted);letter-spacing:1px;margin-bottom:12px">О приложении</div>
+                <div style="display:flex;flex-direction:column;gap:8px;font-size:14px">
+                  <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Версия</span><span>1.5.0</span></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Дата сборки</span><span>09.05.2026</span></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">GitHub</span><span style="font-weight:500">kateio/kopeika</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-label">6. Settings root</div>
+    </div>
+
+
+    <!-- ─── Экран 7: Categories list ─── -->
+    <div class="screen-wrapper">
+      <div class="phone-frame phone-frame--overlay">
+        <div class="screen-content" style="opacity:0.3">
+          <div style="padding:56px 24px 12px"><span style="font-size:28px;font-weight:700">Апрель</span></div>
+        </div>
+        <div class="screen-overlay">
+          <div class="screen-sheet" style="height:90%;max-height:90%">
+            <div class="sheet-grabber"></div>
+            <div class="sheet-header">
+              <div style="display:flex;align-items:center;gap:8px">
+                <button style="border:none;background:transparent;display:flex;cursor:pointer;transform:scaleX(-1)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#1A1A1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <h3>Категории</h3>
+              </div>
+              <button class="sheet-close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#7C7C82" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+            </div>
+            <div style="padding:0 16px;overflow:auto;max-height:calc(90vh - 100px)">
+              <div style="background:var(--card);border-radius:var(--r-card);overflow:hidden">
+                <div class="settings-row">
+                  <div class="settings-icon" style="background:#D4F26A">🍕</div>
+                  <div style="flex:1"><div class="settings-label">Еда</div><div style="font-size:12px;color:var(--muted)">расход</div></div>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#7C7C82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-icon" style="background:#FFB4D1">🚕</div>
+                  <div style="flex:1"><div class="settings-label">Транспорт</div><div style="font-size:12px;color:var(--muted)">расход</div></div>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#7C7C82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-icon" style="background:#9EE5C5">💅</div>
+                  <div style="flex:1"><div class="settings-label">Уход за собой</div><div style="font-size:12px;color:var(--muted)">расход</div></div>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#7C7C82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-icon" style="background:#C7B8FF">📱</div>
+                  <div style="flex:1"><div class="settings-label">Подписки</div><div style="font-size:12px;color:var(--muted)">расход</div></div>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#7C7C82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-icon" style="background:#FF8E72">🎁</div>
+                  <div style="flex:1"><div class="settings-label">Непредвиденные</div><div style="font-size:12px;color:var(--muted)">расход</div></div>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#7C7C82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-icon" style="background:#FFD66B">🏠</div>
+                  <div style="flex:1"><div class="settings-label">Дом</div><div style="font-size:12px;color:var(--muted)">расход</div></div>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#7C7C82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-icon" style="background:#A0D8FF">🎮</div>
+                  <div style="flex:1"><div class="settings-label">Развлечения</div><div style="font-size:12px;color:var(--muted)">расход</div></div>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#7C7C82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-icon" style="background:#FFCBA0">💊</div>
+                  <div style="flex:1"><div class="settings-label">Здоровье</div><div style="font-size:12px;color:var(--muted)">расход</div></div>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#7C7C82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-icon" style="background:#D4F26A">👗</div>
+                  <div style="flex:1"><div class="settings-label">Одежда</div><div style="font-size:12px;color:var(--muted)">расход</div></div>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#7C7C82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-icon" style="background:#FFB4D1">☕</div>
+                  <div style="flex:1"><div class="settings-label">Кафе</div><div style="font-size:12px;color:var(--muted)">расход</div></div>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#7C7C82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-icon" style="background:#9EE5C5">💰</div>
+                  <div style="flex:1"><div class="settings-label">Зарплата</div><div style="font-size:12px;color:var(--muted)">доход</div></div>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#7C7C82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-icon" style="background:#D4F26A">💻</div>
+                  <div style="flex:1"><div class="settings-label">Фриланс</div><div style="font-size:12px;color:var(--muted)">доход</div></div>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#7C7C82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+              </div>
+              <button style="margin-top:16px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:var(--r-button);background:var(--accent);color:#000;border:none;font-size:14px;font-weight:600;font-family:var(--font);cursor:pointer">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#000" stroke-width="1.8" stroke-linecap="round"/></svg>
+                Добавить категорию
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-label">7. Categories list</div>
+    </div>
+
+
+    <!-- ─── Экран 8: Edit category ─── -->
+    <div class="screen-wrapper">
+      <div class="phone-frame phone-frame--overlay">
+        <div class="screen-content" style="opacity:0.3">
+          <div style="padding:56px 24px 12px"><span style="font-size:28px;font-weight:700">Апрель</span></div>
+        </div>
+        <div class="screen-overlay">
+          <div class="screen-sheet" style="height:90%;max-height:90%">
+            <div class="sheet-grabber"></div>
+            <div class="sheet-header">
+              <div style="display:flex;align-items:center;gap:8px">
+                <button style="border:none;background:transparent;display:flex;cursor:pointer;transform:scaleX(-1)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#1A1A1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <h3>Редактирование</h3>
+              </div>
+              <button class="sheet-close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#7C7C82" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+            </div>
+            <div style="padding:0 16px">
+              <div style="background:var(--card);border-radius:var(--r-card);padding:16px">
+                <!-- Name -->
+                <div style="margin-bottom:16px">
+                  <div style="font-size:12px;color:var(--muted);margin-bottom:6px">Название</div>
+                  <input class="input-field" type="text" value="Еда" style="width:100%;background:var(--bg)">
+                </div>
+                <!-- Emoji -->
+                <div style="margin-bottom:16px">
+                  <div style="font-size:12px;color:var(--muted);margin-bottom:6px">Иконка</div>
+                  <button style="display:flex;align-items:center;gap:12px;width:100%;padding:12px 16px;border-radius:var(--r-input);border:1px solid var(--border);background:var(--bg);font-family:var(--font);cursor:pointer">
+                    <span style="font-size:24px">🍕</span>
+                    <span style="font-size:15px;color:var(--muted);flex:1;text-align:left">Выбрать эмодзи</span>
+                  </button>
+                </div>
+                <!-- Color -->
+                <div style="margin-bottom:16px">
+                  <div style="font-size:12px;color:var(--muted);margin-bottom:6px">Цвет</div>
+                  <div class="color-picker-row">
+                    <button class="color-pick color-pick--selected" style="background:#D4F26A"></button>
+                    <button class="color-pick" style="background:#FFB4D1"></button>
+                    <button class="color-pick" style="background:#9EE5C5"></button>
+                    <button class="color-pick" style="background:#C7B8FF"></button>
+                    <button class="color-pick" style="background:#FF8E72"></button>
+                    <button class="color-pick" style="background:#FFD66B"></button>
+                    <button class="color-pick" style="background:#A0D8FF"></button>
+                    <button class="color-pick" style="background:#FFCBA0"></button>
+                  </div>
+                </div>
+                <!-- Type -->
+                <div style="margin-bottom:16px">
+                  <div style="font-size:12px;color:var(--muted);margin-bottom:6px">Тип</div>
+                  <div class="seg-ctrl">
+                    <div class="seg-ctrl__item seg-ctrl__item--active">Расход</div>
+                    <div class="seg-ctrl__item seg-ctrl__item--inactive">Доход</div>
+                  </div>
+                </div>
+              </div>
+              <!-- Actions -->
+              <div style="display:flex;gap:12px;margin-top:16px">
+                <button class="btn btn--danger" style="flex:1;padding:14px 16px">Удалить</button>
+                <button class="btn btn--primary" style="flex:2;padding:14px 16px">Сохранить</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-label">8. Edit category</div>
+    </div>
+
+
+    <!-- ─── Экран 9: Emoji picker ─── -->
+    <div class="screen-wrapper">
+      <div class="phone-frame phone-frame--overlay">
+        <div class="screen-content" style="opacity:0.3">
+          <div style="padding:56px 24px 12px"><span style="font-size:28px;font-weight:700">Апрель</span></div>
+        </div>
+        <div class="screen-overlay">
+          <div class="screen-sheet" style="height:90%;max-height:90%">
+            <div class="sheet-grabber"></div>
+            <div class="sheet-header">
+              <div style="display:flex;align-items:center;gap:8px">
+                <button style="border:none;background:transparent;display:flex;cursor:pointer;transform:scaleX(-1)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#1A1A1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <h3>Редактирование</h3>
+              </div>
+              <button class="sheet-close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#7C7C82" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+            </div>
+            <div style="padding:0 16px">
+              <div style="background:var(--card);border-radius:var(--r-card);padding:16px">
+                <!-- Name field -->
+                <div style="margin-bottom:16px">
+                  <div style="font-size:12px;color:var(--muted);margin-bottom:6px">Название</div>
+                  <input class="input-field" type="text" value="Еда" style="width:100%;background:var(--bg)">
+                </div>
+                <!-- Emoji button (open state) -->
+                <div style="margin-bottom:8px">
+                  <div style="font-size:12px;color:var(--muted);margin-bottom:6px">Иконка</div>
+                  <button style="display:flex;align-items:center;gap:12px;width:100%;padding:12px 16px;border-radius:var(--r-input);border:1px solid var(--border);background:var(--bg);font-family:var(--font);cursor:pointer">
+                    <span style="font-size:24px">🍕</span>
+                    <span style="font-size:15px;color:var(--muted);flex:1;text-align:left">Закрыть</span>
+                  </button>
+                </div>
+                <!-- Emoji grid -->
+                <div style="border-radius:var(--r-card);overflow:hidden;max-height:300px;overflow-y:auto;margin-top:8px">
+                  <div style="padding:4px 8px;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;background:var(--bg)">Еда и напитки</div>
+                  <div class="emoji-grid" style="background:var(--bg)">
+                    <div class="emoji-cell">🍏</div>
+                    <div class="emoji-cell">🍎</div>
+                    <div class="emoji-cell">🍐</div>
+                    <div class="emoji-cell">🍊</div>
+                    <div class="emoji-cell">🍋</div>
+                    <div class="emoji-cell">🍌</div>
+                    <div class="emoji-cell">🍉</div>
+                    <div class="emoji-cell">🍇</div>
+                    <div class="emoji-cell">🍓</div>
+                    <div class="emoji-cell">🫐</div>
+                    <div class="emoji-cell">🍈</div>
+                    <div class="emoji-cell">🍒</div>
+                    <div class="emoji-cell">🍑</div>
+                    <div class="emoji-cell">🥭</div>
+                    <div class="emoji-cell">🍍</div>
+                    <div class="emoji-cell">🥥</div>
+                    <div class="emoji-cell">🥝</div>
+                    <div class="emoji-cell">🍅</div>
+                    <div class="emoji-cell">🫒</div>
+                    <div class="emoji-cell">🥑</div>
+                    <div class="emoji-cell">🍆</div>
+                    <div class="emoji-cell">🥔</div>
+                    <div class="emoji-cell">🥕</div>
+                    <div class="emoji-cell">🌽</div>
+                    <div class="emoji-cell">🌶️</div>
+                    <div class="emoji-cell">🫑</div>
+                    <div class="emoji-cell">🥒</div>
+                    <div class="emoji-cell">🥬</div>
+                    <div class="emoji-cell">🥦</div>
+                    <div class="emoji-cell">🧄</div>
+                    <div class="emoji-cell">🧅</div>
+                    <div class="emoji-cell">🍄</div>
+                  </div>
+                  <div style="padding:4px 8px;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;background:var(--bg)">Транспорт</div>
+                  <div class="emoji-grid" style="background:var(--bg)">
+                    <div class="emoji-cell">🚗</div>
+                    <div class="emoji-cell">🚕</div>
+                    <div class="emoji-cell">🚌</div>
+                    <div class="emoji-cell">🚎</div>
+                    <div class="emoji-cell">🏎️</div>
+                    <div class="emoji-cell">🚓</div>
+                    <div class="emoji-cell">🚑</div>
+                    <div class="emoji-cell">🚒</div>
+                    <div class="emoji-cell">🛵</div>
+                    <div class="emoji-cell">🚲</div>
+                    <div class="emoji-cell">✈️</div>
+                    <div class="emoji-cell">🚀</div>
+                    <div class="emoji-cell">🚂</div>
+                    <div class="emoji-cell">⛵</div>
+                    <div class="emoji-cell">🛶</div>
+                    <div class="emoji-cell">🚁</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-label">9. Emoji picker</div>
+    </div>
+
+
+    <!-- ─── Экран 10: Summary sheet ─── -->
+    <div class="screen-wrapper">
+      <div class="phone-frame phone-frame--overlay">
+        <div class="screen-content" style="opacity:0.3">
+          <div style="padding:56px 24px 12px"><span style="font-size:28px;font-weight:700">Апрель</span></div>
+        </div>
+        <div class="screen-overlay">
+          <div class="screen-sheet">
+            <div class="sheet-grabber"></div>
+            <div class="sheet-header">
+              <h3>Сводка за апрель</h3>
+              <button class="sheet-close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#7C7C82" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+            </div>
+            <div style="padding:0 24px">
+              <!-- Income -->
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+                <span style="font-size:15px;color:var(--muted)">Доходы</span>
+                <span style="font-size:20px;font-weight:700;color:#22C55E;font-variant-numeric:tabular-nums;font-family:var(--font)">+405 000 ₽</span>
+              </div>
+              <!-- Expenses -->
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+                <span style="font-size:15px;color:var(--muted)">Расходы</span>
+                <span style="font-size:20px;font-weight:700;color:var(--fg);font-variant-numeric:tabular-nums;font-family:var(--font)">−57 699 ₽</span>
+              </div>
+              <!-- Balance -->
+              <div style="border-top:1px solid var(--border);padding-top:16px;display:flex;justify-content:space-between;align-items:center">
+                <span style="font-size:15px;font-weight:500">Остаток</span>
+                <span style="font-size:22px;font-weight:700;color:#22C55E;font-variant-numeric:tabular-nums;font-family:var(--font)">+347 301 ₽</span>
+              </div>
+
+              <!-- Top categories -->
+              <div style="margin-top:24px">
+                <div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--muted);letter-spacing:1px;margin-bottom:12px">Топ категорий трат</div>
+                <div style="display:flex;flex-direction:column;gap:12px">
+                  <div style="display:flex;align-items:center;gap:12px">
+                    <span style="font-size:18px">🍕</span>
+                    <span style="flex:1;font-size:15px">Еда</span>
+                    <span style="font-size:12px;color:var(--muted);margin-right:8px">18%</span>
+                    <span style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums">10 360 ₽</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:12px">
+                    <span style="font-size:18px">🏠</span>
+                    <span style="flex:1;font-size:15px">Дом</span>
+                    <span style="font-size:12px;color:var(--muted);margin-right:8px">18%</span>
+                    <span style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums">10 250 ₽</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:12px">
+                    <span style="font-size:18px">👗</span>
+                    <span style="flex:1;font-size:15px">Одежда</span>
+                    <span style="font-size:12px;color:var(--muted);margin-right:8px">12%</span>
+                    <span style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums">6 750 ₽</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-label">10. Summary sheet</div>
+    </div>
+
+  </div><!-- /screens-grid -->
+</section>
+
+</body>
+</html>
