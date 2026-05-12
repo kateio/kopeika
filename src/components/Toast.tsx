@@ -18,7 +18,7 @@ export function Toast({ message, icon, visible, onHide }: ToastProps) {
 
   return (
     <div
-      className="flex items-center gap-2.5 rounded-DEFAULT bg-fg px-4 py-3 text-sm text-bg"
+      className="flex items-center gap-2.5 rounded-card bg-fg px-4 py-3 text-sm text-bg"
       style={{
         animation: 'slideUp 0.3s ease',
       }}

@@ -69,7 +69,7 @@ const ICON_NAMES = ['plus', 'paperclip', 'send', 'close', 'chevDown', 'chevRight
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
-    <section id={id} className="scroll-mt-28 rounded-[20px] bg-white p-6">
+    <section id={id} className="scroll-mt-28 rounded-card bg-white p-6">
       <h2 className="mb-5 text-xl font-bold text-fg" style={{ fontFamily: '"Inter Tight", inherit' }}>
         {title}
       </h2>
@@ -456,7 +456,7 @@ export function UIKitPage() {
         {/* 11. CategoryModal */}
         <Section id="category-modal" title="CategoryModal">
           <div className="mb-2 text-xs text-muted">Статически видимая модалка (без overlay)</div>
-          <div className="overflow-hidden rounded-[20px] bg-bg" style={{ minHeight: 360 }}>
+          <div className="overflow-hidden rounded-card bg-bg" style={{ minHeight: 360 }}>
             <div className="flex w-full flex-col rounded-t-[20px] bg-bg" style={{ padding: '12px 0 30px' }}>
               {/* Grabber */}
               <div

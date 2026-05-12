@@ -19,7 +19,7 @@ export function InputBar({
 
   return (
     <div
-      className="flex items-center gap-2 rounded-[24px] bg-card border border-border"
+      className="flex items-center gap-2 rounded-pill bg-card border border-border"
       style={{ padding: '8px 8px 8px 14px' }}
     >
       <button
@@ -43,11 +43,10 @@ export function InputBar({
 
       <button
         onClick={onSend}
-        className="flex items-center justify-center border-none"
+        className="flex items-center justify-center border-none rounded-input"
         style={{
           width: 36,
           height: 36,
-          borderRadius: 12,
           background: hasText ? '#D4F26A' : '#EDE9E1',
           cursor: hasText ? 'pointer' : 'default',
           transition: 'background 0.15s',

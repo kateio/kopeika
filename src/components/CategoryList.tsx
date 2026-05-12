@@ -6,6 +6,7 @@ interface CategoryListItem {
   color: string;
   amount: number;
   percentage: number;
+  icon?: string;
 }
 
 interface CategoryListProps {
@@ -37,7 +38,7 @@ export function CategoryList({
             cursor: 'pointer',
           }}
         >
-          <CatDot color={item.color} size={36} radius={12} />
+          <CatDot color={item.color} size={36} radius={12} emoji={item.icon} />
           <div className="flex-1">
             <div className="text-base font-medium text-fg">{item.name}</div>
             <div className="mt-0.5 text-xs text-muted">{item.percentage}%</div>
